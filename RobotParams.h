@@ -1,4 +1,3 @@
-.
 /** \file
  *  Defines task parameters, hardware assignments and controller button/axis assignment.
  *
@@ -26,9 +25,10 @@ const char* const ROBOT_VERSION =	"0.5";			//Version
 
 //Task Params - Defines component task priorites relative to the default priority.
 //EXAMPLE: const int DRIVETRAIN_PRIORITY = DEFAULT_PRIORITY -2;
-const int DEFAULT_PRIORITY = 150;
+const int DEFAULT_PRIORITY      = 50;
 const int COMPONENT_PRIORITY 	= DEFAULT_PRIORITY;
 const int DRIVETRAIN_PRIORITY 	= DEFAULT_PRIORITY;
+const int CHEESY_PRIORITY 	    = DEFAULT_PRIORITY;
 const int AUTONOMOUS_PRIORITY 	= DEFAULT_PRIORITY;
 const int AUTOEXEC_PRIORITY 	= DEFAULT_PRIORITY;
 const int AUTOPARSER_PRIORITY 	= DEFAULT_PRIORITY;
@@ -37,6 +37,7 @@ const int AUTOPARSER_PRIORITY 	= DEFAULT_PRIORITY;
 //EXAMPLE: const char* DRIVETRAIN_TASKNAME = "tDrive";
 const char* const COMPONENT_TASKNAME	= "tComponent";
 const char* const DRIVETRAIN_TASKNAME	= "tDrive";
+const char* const CHEESY_TASKNAME	    = "tDrive";
 const char* const AUTONOMOUS_TASKNAME	= "tAuto";
 const char* const AUTOEXEC_TASKNAME		= "tAutoEx";
 const char* const AUTOPARSER_TASKNAME	= "tParse";
@@ -70,7 +71,9 @@ Add more as needed.
 
 const int CAN_PDB = 19;
 const int CAN_DRIVETRAIN_LEFT_MOTOR = 1;
-const int CAN_DRIVETRAIN_RIGHT_MOTOR = 2;
+const int CAN_DRIVETRAIN_LEFT_MOTOR_SLAVE = 2;
+const int CAN_DRIVETRAIN_RIGHT_MOTOR = 3;
+const int CAN_DRIVETRAIN_RIGHT_MOTOR_SLAVE = 4;
 
 //Relay Channels - Assigns names to Relay ports 1-8 on the Roborio
 //EXAMPLE: const int RLY_COMPRESSOR = 1;

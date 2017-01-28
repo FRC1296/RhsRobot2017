@@ -64,6 +64,7 @@ enum MessageCommand {
 
 	COMMAND_DRIVETRAIN_STOP,			//!< Tells Drivetrain to stop moving
 	COMMAND_DRIVETRAIN_DRIVE_TANK,		//!< Tells Drivetrain to use tank drive
+	COMMAND_DRIVETRAIN_DRIVE_CHEEZY,    //!< Tells Drivetrain to use cheesy drive
 
 	//add new component messages here
 
