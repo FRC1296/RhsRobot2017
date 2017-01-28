@@ -1,3 +1,4 @@
+.
 /** \file
  *  Defines task parameters, hardware assignments and controller button/axis assignment.
  *
@@ -154,7 +155,8 @@ const int POV_STILL = -1;
 #define CHEEZY_DRIVE_WHEEL			(pController_1->GetRawAxis(L310_THUMBSTICK_RIGHT_X))
 #define CHEEZY_DRIVE_THROTTLE		(-pController_1->GetRawAxis(L310_THUMBSTICK_LEFT_Y))
 #define CHEEZY_DRIVE_SPIN		    (-pController_1->GetRawAxis(L310_TRIGGER_LEFT) + Controller_1->GetRawAxis(L310_TRIGGER_RIGHT))
-#define CHEEZY_DRIVE_QUICKTURN		(pController_1->GetRawButton(L310_BUTTON_BUMPER_LEFT))
+
+#define TANK_DRIVE_STOP		         (pController_1->GetRawButton(L310_BUTTON_BUMPER_LEFT))
 
 #endif // USE_L310_FOR_CONTROLLER_1
 

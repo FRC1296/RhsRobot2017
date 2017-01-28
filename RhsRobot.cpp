@@ -82,7 +82,7 @@ void RhsRobot::OnStateChange() {
 	}
 }
 
-// this method is where the magic happens.  t is called every time we get a new message from th driver station
+// this method is where the magic happens.  It is called every time we get a new message from th driver station
 
 void RhsRobot::Run() {
 	/* Poll for control data and send messages to each subsystem. Surround blocks with if(component) so entire components can be disabled
@@ -104,10 +104,18 @@ void RhsRobot::Run() {
 
 	if (pDrivetrain)
 	{
-		robotMessage.command = COMMAND_DRIVETRAIN_DRIVE_TANK;
-		robotMessage.params.tankDrive.left = TANK_DRIVE_LEFT;
-		robotMessage.params.tankDrive.left = TANK_DRIVE_RIGHT;
-		pDrivetrain->SendMessage(&robotMessage);
+		if(TANK_DRIVE_STOP)
+		{
+			robotMessage.command = COMMAND_DRIVETRAIN_STOP;
+			pDrivetrain->SendMessage(&robotMessage);
+		}
+		else
+		{
+			robotMessage.command = COMMAND_DRIVETRAIN_DRIVE_TANK;
+			robotMessage.params.tankDrive.left = TANK_DRIVE_LEFT;
+			robotMessage.params.tankDrive.right = TANK_DRIVE_RIGHT;
+			pDrivetrain->SendMessage(&robotMessage);
+		}
 	}
 }
 
