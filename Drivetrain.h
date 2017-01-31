@@ -36,8 +36,10 @@ private:
 	void OnStateChange();
 	void Run();
 
-	CANTalon* pLeftMotor;
-	CANTalon* pRightMotor;
+	CANTalon* pLeftMotor1;
+	CANTalon* pLeftMotor2;
+	CANTalon* pRightMotor1;
+	CANTalon* pRightMotor2;
 	ADXRS453Z *pGyro;
 };
 
