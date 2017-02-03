@@ -20,6 +20,8 @@ RhsRobot::RhsRobot() {
 	pController_2 = NULL;  // driver number two's joystick
 	pAutonomous = NULL;    // the object that executes anonymous behaviours
 	pDrivetrain = NULL;    // the object that drives the wheels
+	pClimber = NULL;
+	pHopper =NULL;
 
     // set new object pointers to NULL here
 
@@ -53,6 +55,8 @@ void RhsRobot::Init() {
 	pController_2 = new Joystick(1);
 	pDrivetrain = new Drivetrain();
 	pAutonomous = new Autonomous();
+	pClimber    = new Climber();
+	//pHopper = new Hopper();
 
 	std::vector<ComponentBase *>::iterator nextComponent = ComponentSet.begin();
 
@@ -66,6 +70,15 @@ void RhsRobot::Init() {
 		nextComponent = ComponentSet.insert(nextComponent, pDrivetrain);
 	}
 
+	if(pHopper)
+	{
+		nextComponent = ComponentSet.insert(nextComponent, pHopper);
+	}
+
+	if(pClimber)
+	{
+		nextComponent = ComponentSet.insert(nextComponent, pClimber);
+	}
 	// instantiate our other objects here
 }
 
@@ -82,7 +95,7 @@ void RhsRobot::OnStateChange() {
 	}
 }
 
-// this method is where the magic happens.  It is called every time we get a new message from th driver station
+// this method is where the magic happens.  t is called every time we get a new message from th driver station
 
 void RhsRobot::Run() {
 	/* Poll for control data and send messages to each subsystem. Surround blocks with if(component) so entire components can be disabled
@@ -104,19 +117,81 @@ void RhsRobot::Run() {
 
 	if (pDrivetrain)
 	{
-		if(TANK_DRIVE_STOP)
+		robotMessage.command = COMMAND_DRIVETRAIN_STOP;
+		pDrivetrain->SendMessage(&robotMessage);
+		robotMessage.command = COMMAND_DRIVETRAIN_DRIVE_TANK;
+		robotMessage.params.tankDrive.left = TANK_DRIVE_LEFT;
+		robotMessage.params.tankDrive.right = TANK_DRIVE_RIGHT;
+		pDrivetrain->SendMessage(&robotMessage);
+	}
+	if (pHopper)
+	{
+		if (HOPPER_UP)
 		{
-			robotMessage.command = COMMAND_DRIVETRAIN_STOP;
-			pDrivetrain->SendMessage(&robotMessage);
+			robotMessage.command = COMMAND_HOPPER_UP;
+			robotMessage.params.hopper.HopUp = 1.0;
+			pHopper->SendMessage(&robotMessage);
+		}
+
+		else if (HOPPER_DOWN)
+		{
+			robotMessage.command = COMMAND_HOPPER_DOWN;
+			robotMessage.params.hopper.HopDown = 1.0;
+			pHopper->SendMessage(&robotMessage);
+		}
+
+		else
+		{
+			robotMessage.command = COMMAND_HOPPER_STOP;
+			pClimber->SendMessage(&robotMessage);
+		}
+
+	}
+
+	if (pClimber)
+	{
+		if (CLIMBER_UP)
+		{
+			robotMessage.command = COMMAND_CLIMBER_UP;
+			robotMessage.params.climber.ClimbUp = 1.0;
+			pClimber->SendMessage(&robotMessage);
+		}
+		else if (CLIMBER_DOWN)
+		{
+			robotMessage.command = COMMAND_CLIMBER_DOWN;
+			robotMessage.params.climber.ClimbDown = -.2;
+			pClimber->SendMessage(&robotMessage);
 		}
 		else
 		{
-			robotMessage.command = COMMAND_DRIVETRAIN_DRIVE_TANK;
-			robotMessage.params.tankDrive.left = TANK_DRIVE_LEFT;
-			robotMessage.params.tankDrive.right = TANK_DRIVE_RIGHT;
-			pDrivetrain->SendMessage(&robotMessage);
+			robotMessage.command = COMMAND_CLIMBER_STOP;
+			pClimber->SendMessage(&robotMessage);
 		}
+
 	}
+
+	if (pGearIntake)
+		{
+			if (GEARINTAKE_UP)
+			{
+				robotMessage.command = COMMAND_GEARINTAKE_UP;
+				robotMessage.params.gearintake.GearIntakeUp = 1.0;
+				pGearIntake->SendMessage(&robotMessage);
+			}
+			else if (GEARINTAKE_DOWN)
+			{
+				robotMessage.command = COMMAND_GEARINTAKE_DOWN;
+				robotMessage.params.gearintake.GearIntakeDown = -.2;
+				pGearIntake->SendMessage(&robotMessage);
+			}
+			else
+			{
+				robotMessage.command = COMMAND_GEARINTAKE_STOP;
+				pGearIntake->SendMessage(&robotMessage);
+			}
+
+		}
+
 }
 
 START_ROBOT_CLASS(RhsRobot)
