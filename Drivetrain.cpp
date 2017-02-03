@@ -99,11 +99,6 @@ void Drivetrain::Run() {
 			pRightMotor->Set(localMessage.params.tankDrive.right);
 			break;
 
-		case COMMAND_DRIVETRAIN_STOP:  // stop the robot
-			pLeftMotor->Set(0.0);
-			pRightMotor->Set(0.0);
-			break;
-
 		case COMMAND_SYSTEM_MSGTIMEOUT:  // what should we do if we do not get a timely message?
 			break;
 

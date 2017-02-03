@@ -1,4 +1,3 @@
-.
 /** \file
  *  Defines task parameters, hardware assignments and controller button/axis assignment.
  *
@@ -32,6 +31,7 @@ const int DRIVETRAIN_PRIORITY 	= DEFAULT_PRIORITY;
 const int AUTONOMOUS_PRIORITY 	= DEFAULT_PRIORITY;
 const int AUTOEXEC_PRIORITY 	= DEFAULT_PRIORITY;
 const int AUTOPARSER_PRIORITY 	= DEFAULT_PRIORITY;
+const int FUELINTAKE_PRIORITY   = DEFAULT_PRIORITY;
 
 //Task Names - Used when you view the task list but used by the operating system
 //EXAMPLE: const char* DRIVETRAIN_TASKNAME = "tDrive";
@@ -40,6 +40,7 @@ const char* const DRIVETRAIN_TASKNAME	= "tDrive";
 const char* const AUTONOMOUS_TASKNAME	= "tAuto";
 const char* const AUTOEXEC_TASKNAME		= "tAutoEx";
 const char* const AUTOPARSER_TASKNAME	= "tParse";
+const char* const FUELINTAKE_TASKNAME   = "tfuel";
 
 //TODO change these variables throughout the code to PIPE or whatever instead  of QUEUE
 //Queue Names - Used when you want to open the message queue for any task
@@ -50,6 +51,7 @@ const char* const COMPONENT_QUEUE 	= "/tmp/qComp";
 const char* const DRIVETRAIN_QUEUE 	= "/tmp/qDrive";
 const char* const AUTONOMOUS_QUEUE 	= "/tmp/qAuto";
 const char* const AUTOPARSER_QUEUE 	= "/tmp/qParse";
+const char* const FUELINTAKE_QUEUE = "/tmp/qFuel";
 
 //PWM Channels - Assigns names to PWM ports 1-10 on the Roborio
 //EXAMPLE: const int PWM_DRIVETRAIN_FRONT_LEFT_MOTOR = 1;
@@ -71,6 +73,8 @@ Add more as needed.
 const int CAN_PDB = 19;
 const int CAN_DRIVETRAIN_LEFT_MOTOR = 1;
 const int CAN_DRIVETRAIN_RIGHT_MOTOR = 2;
+const int CAN_PFUELMOTORONE = 5;
+const int CAN_PFUELMOTORTWO = 6;
 
 //Relay Channels - Assigns names to Relay ports 1-8 on the Roborio
 //EXAMPLE: const int RLY_COMPRESSOR = 1;
@@ -155,8 +159,7 @@ const int POV_STILL = -1;
 #define CHEEZY_DRIVE_WHEEL			(pController_1->GetRawAxis(L310_THUMBSTICK_RIGHT_X))
 #define CHEEZY_DRIVE_THROTTLE		(-pController_1->GetRawAxis(L310_THUMBSTICK_LEFT_Y))
 #define CHEEZY_DRIVE_SPIN		    (-pController_1->GetRawAxis(L310_TRIGGER_LEFT) + Controller_1->GetRawAxis(L310_TRIGGER_RIGHT))
-
-#define TANK_DRIVE_STOP		         (pController_1->GetRawButton(L310_BUTTON_BUMPER_LEFT))
+#define CHEEZY_DRIVE_QUICKTURN		(pController_1->GetRawButton(L310_BUTTON_BUMPER_LEFT))
 
 #endif // USE_L310_FOR_CONTROLLER_1
 
