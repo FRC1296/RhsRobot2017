@@ -44,6 +44,15 @@
  */
 
 enum MessageCommand {
+	//hopper
+	COMMAND_HOPPER_UP,
+	COMMAND_HOPPER_DOWN,
+	COMMAND_HOPPER_STOP,
+
+	COMMAND_CLIMBER_UP,
+	COMMAND_CLIMBER_DOWN,
+	COMMAND_CLIMBER_STOP,
+
 	COMMAND_UNKNOWN,					//!< COMMAND_UNKNOWN
 	COMMAND_SYSTEM_MSGTIMEOUT,			//!< COMMAND_SYSTEM_MSGTIMEOUT
 	COMMAND_SYSTEM_OK,					//!< COMMAND_SYSTEM_OK
@@ -76,6 +85,18 @@ struct TankDriveParams {
 	float right;
 };
 
+struct HopperParams
+{
+	float HopUp;
+	float HopDown;
+};
+
+struct ClimberParams
+{
+	float ClimbUp;
+	float ClimbDown;
+};
+
 ///Used to deliver joystick readings to Drivetrain
 struct CheezyDriveParams {
 	float wheel;
@@ -106,10 +127,12 @@ struct AutonomousParams {
 
 ///Contains all the parameter structures contained in a message
 union MessageParams {
+	HopperParams hopper;
 	TankDriveParams tankDrive;
 	CheezyDriveParams cheezyDrive;
 	AutonomousParams autonomous;
 	SystemParams system;
+	ClimberParams climber;
 };
 
 ///A structure containing a command, a set of parameters, and a reply id, sent between components

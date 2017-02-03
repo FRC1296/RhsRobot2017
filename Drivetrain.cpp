@@ -16,11 +16,11 @@
 #include <math.h>
 #include <assert.h>
 #include <ComponentBase.h>
-
+#include <CANTalon.h>
 #include <string>
 #include <iostream>
 #include <algorithm>
-
+#include <cmath>
 #include "Drivetrain.h"			//For the local header file
 #include "RobotParams.h"
 
@@ -32,19 +32,31 @@ Drivetrain::Drivetrain() :
 				DRIVETRAIN_PRIORITY) {
 	// create all the objects used in this thread
 
-	pLeftMotor = new CANTalon(CAN_DRIVETRAIN_LEFT_MOTOR);
-	pRightMotor = new CANTalon(CAN_DRIVETRAIN_RIGHT_MOTOR);
-	wpi_assert(pLeftMotor && pRightMotor);
+	pLeftMotor1 = new CANTalon(CAN_DRIVETRAIN_LEFT_MOTOR1);
+	pLeftMotor2 = new CANTalon(CAN_DRIVETRAIN_LEFT_MOTOR2);
+	pRightMotor1 = new CANTalon(CAN_DRIVETRAIN_RIGHT_MOTOR1);
+	pRightMotor2 = new CANTalon(CAN_DRIVETRAIN_RIGHT_MOTOR2);
+
+	pLeftMotor1->SetVoltageRampRate(48.0);
+	pRightMotor1->SetVoltageRampRate(48.0);
+
+	wpi_assert(pLeftMotor1 && pLeftMotor2 && pRightMotor1 && pRightMotor2);
 
 	// initialize the motor on the left side
 
-	pLeftMotor->ConfigNeutralMode(CANSpeedController::kNeutralMode_Brake);
-	pLeftMotor->SetControlMode(CANTalon::kPercentVbus);
+	pLeftMotor1->ConfigNeutralMode(CANTalon::kNeutralMode_Brake);
+	pLeftMotor1->SetControlMode(CANTalon::kPercentVbus);
+
+	pLeftMotor2->SetControlMode(CANTalon::kFollower);
+	pLeftMotor2->Set(CAN_DRIVETRAIN_LEFT_MOTOR1);
 
 	// initialize the motor on the right side
 
-	pRightMotor->ConfigNeutralMode(CANSpeedController::kNeutralMode_Brake);
-	pRightMotor->SetControlMode(CANTalon::kPercentVbus);
+	pRightMotor1->ConfigNeutralMode(CANTalon::kNeutralMode_Brake);
+	pRightMotor1->SetControlMode(CANTalon::kPercentVbus);
+
+	pRightMotor2->SetControlMode(CANTalon::kFollower);
+	pRightMotor2->Set(CAN_DRIVETRAIN_RIGHT_MOTOR1);
 
 	pGyro = new ADXRS453Z();
 	wpi_assert(pGyro);
@@ -59,8 +71,10 @@ Drivetrain::~Drivetrain()			//Destructor
 	// clean up here, delete things in reverse order
 
 	delete pTask;
-	delete pLeftMotor;
-	delete pRightMotor;
+	delete pLeftMotor1;
+	delete pRightMotor1;
+	delete pLeftMotor2;
+	delete pRightMotor2;
 	delete pGyro;
 }
 
@@ -91,17 +105,29 @@ void Drivetrain::OnStateChange()
 }
 
 void Drivetrain::Run() {
-
+double speedleft;
+double speedright;
 	switch(localMessage.command)
 	{
 		case COMMAND_DRIVETRAIN_DRIVE_TANK:  // move the robot in tank mode
-			pLeftMotor->Set(localMessage.params.tankDrive.left);
-			pRightMotor->Set(localMessage.params.tankDrive.right);
+			speedleft = tan((3.14159267/4)*(localMessage.params.tankDrive.left));
+			speedright = tan((3.14159267/4)*(localMessage.params.tankDrive.right));
+			pLeftMotor1->Set(speedleft*-1);
+			//pLeftMotor2->Set(speedleft*-1);
+			pRightMotor1->Set(speedright*-1);
+			//pRightMotor2->Set(speedright*-1);
+			SmartDashboard::PutNumber("L1 (1)", pLeftMotor1->GetOutputCurrent());
+			SmartDashboard::PutNumber("L2 (2)", pLeftMotor2->GetOutputCurrent());
+			SmartDashboard::PutNumber("R1 (3)", pRightMotor1->GetOutputCurrent());
+			SmartDashboard::PutNumber("R2 (4)", pRightMotor2->GetOutputCurrent());
+
 			break;
 
-		case COMMAND_DRIVETRAIN_STOP:  // stop the robot
-			pLeftMotor->Set(0.0);
-			pRightMotor->Set(0.0);
+		case COMMAND_DRIVETRAIN_STOP:
+			pLeftMotor1->Set(0);
+			//pLeftMotor2->Set(0);
+			pRightMotor1->Set(0);
+			//pRightMotor2->Set(0);
 			break;
 
 		case COMMAND_SYSTEM_MSGTIMEOUT:  // what should we do if we do not get a timely message?
