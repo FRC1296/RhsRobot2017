@@ -72,12 +72,9 @@ void Climber::Run()
 {
 	SmartDashboard::PutNumber("Climber1 (1)", pClimberMotor1->GetOutputCurrent());
 	float StopMotor = SmartDashboard::PutNumber("Climber1 (1)", pClimberMotor1->GetOutputCurrent());
-	if(StopMotor >= 40)
-	{
-		pClimberMotor1->Set(0);
-	}
-	else
-	{
+
+
+
 		switch(localMessage.command)			//Reads the message command
 		{
 	//TODO add command cases for Climber
@@ -98,6 +95,6 @@ void Climber::Run()
 
 			default:
 				break;
-		}
+
 	}
 };

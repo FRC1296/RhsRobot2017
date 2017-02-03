@@ -64,17 +64,25 @@ void Hopper::Run()
 	switch(localMessage.command)			//Reads the message command
 	{
 	//TODO add command cases for Hopper
-
-		case COMMAND_HOPPER_UP:
-			pHopperMotor->Set(localMessage.params.hopper.HopUp);
-			break;
-
-		case COMMAND_HOPPER_DOWN:
-			pHopperMotor->Set(localMessage.params.hopper.HopDown*-1);
-			break;
-
-		case COMMAND_HOPPER_STOP:
+		SmartDashboard::PutNumber("Climber1 (1)", pHopperMotor->GetOutputCurrent());
+		float StopMotor = SmartDashboard::PutNumber("Climber1 (1)", pHopperMotor->GetOutputCurrent());
+		if(StopMotor >= 40)
+		{
 			pHopperMotor->Set(0);
-			break;
 		}
+		else
+		{
+			case COMMAND_HOPPER_UP:
+				pHopperMotor->Set(localMessage.params.hopper.HopUp);
+				break;
+
+			case COMMAND_HOPPER_DOWN:
+				pHopperMotor->Set(localMessage.params.hopper.HopDown*-1);
+				break;
+
+			case COMMAND_HOPPER_STOP:
+				pHopperMotor->Set(0);
+				break;
+		}
+	}
 };
