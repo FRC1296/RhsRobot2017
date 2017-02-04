@@ -7,10 +7,13 @@
 #ifndef RHS_ROBOT_H
 #define RHS_ROBOT_H
 
-#include <Autonomous.h>
-#include <Drivetrain.h>
-#include <RhsRobotBase.h>
-#include "WPILib.h"
+#include <WPILib.h>
+
+#include "Autonomous.h"
+#include "Drivetrain.h"
+#include "RhsRobotBase.h"
+#include "Hopper.h"
+#include "Climber.h"
 
 class RhsRobot : public RhsRobotBase
 {
@@ -23,6 +26,9 @@ private:
 	Joystick* pController_2;
 	Drivetrain* pDrivetrain;
 	Autonomous* pAutonomous;
+	Hopper* pHopper;
+	Climber* pClimber;
+	GearIntake* pGearIntake;
 
 	std::vector <ComponentBase *> ComponentSet;
 	

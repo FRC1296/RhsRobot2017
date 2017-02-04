@@ -99,15 +99,15 @@
 #define L310_THUMBSTICK_LEFT_X		0
 #define L310_THUMBSTICK_LEFT_Y		1
 #define L310_THUMBSTICK_RIGHT_X		4
-#define L310_THUMBSTICK_RIGHT_Y		5
+#define L310_THUMBSTICK_RIGHT_Y		3
 
 #define L310_POV					1   //D-pad
 
 #define L310_TRIGGER_LEFT			2	// value > 0
 #define L310_TRIGGER_RIGHT			3	// value < 0
 
-/* 
-DPAD works like this (not sure which channel)
+
+/* DPAD works like this (not sure which channel)
 
 -1: No Thumbpad Button
 0: North Thumbpad Button
@@ -118,6 +118,6 @@ DPAD works like this (not sure which channel)
 225: South-West Thumbpad Button
 270: West Thumbpad Button
 315: North-West Thumbpad Button 
-*/
 
+*/
 #endif //JOYSTICK_LAYOUTS_H
