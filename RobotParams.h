@@ -113,14 +113,14 @@ const int JOYSTICK_AXIS_COUNT = 5;
 const int POV_STILL = -1;
 
 //Primary Controller Mapping - Assigns action to buttons or axes on the first joystick
-#undef	USE_X3D_FOR_CONTROLLER_1
+#define	USE_X3D_FOR_CONTROLLER_1
 #undef	USE_XBOX_FOR_CONTROLLER_1
-#define	USE_L310_FOR_CONTROLLER_1
+#undef USE_L310_FOR_CONTROLLER_1
 
 //Secondary Controller Mapping - Assigns action to buttons or axes on the second joystick
 #undef	USE_X3D_FOR_CONTROLLER_2
-#undef 	USE_XBOX_FOR_CONTROLLER_2
-#define USE_L310_FOR_CONTROLLER_2
+#define USE_XBOX_FOR_CONTROLLER_2
+#undef USE_L310_FOR_CONTROLLER_2
 
 #ifdef USE_XBOX_FOR_CONTROLLER_1
 #endif
@@ -161,13 +161,14 @@ const int POV_STILL = -1;
   	RightTrigger				~~
  \endverbatim
  */
-#ifdef USE_L310_FOR_CONTROLLER_1
-//ID numbers for various buttons and axis
-#define TANK_DRIVE_LEFT_ID			L310_THUMBSTICK_LEFT_Y
-#define TANK_DRIVE_RIGHT_ID			L310_THUMBSTICK_RIGHT_Y
 
-#define TANK_DRIVE_LEFT				(pController_1->GetRawAxis(L310_THUMBSTICK_LEFT_Y))
-#define TANK_DRIVE_RIGHT			(-pController_1->GetRawAxis(L310_THUMBSTICK_RIGHT_Y))
+//ID numbers for various buttons and axis
+#define TANK_DRIVE_LEFT_ID			X3D_AXS_STCK_Y
+#define TANK_DRIVE_RIGHT_ID			X3D_AXS_STCK_Y
+
+#define TANK_DRIVE_LEFT				(pController_1->GetRawAxis(X3D_AXS_STCK_Y))
+#define TANK_DRIVE_RIGHT			(-pController_2->GetRawAxis(X3D_AXS_STCK_Y))
+
 #define CHEEZY_DRIVE_WHEEL			(pController_1->GetRawAxis(L310_THUMBSTICK_RIGHT_X))
 #define CHEEZY_DRIVE_THROTTLE		(-pController_1->GetRawAxis(L310_THUMBSTICK_LEFT_Y))
 #define CHEEZY_DRIVE_SPIN		    (-pController_1->GetRawAxis(L310_TRIGGER_LEFT) + Controller_1->GetRawAxis(L310_TRIGGER_RIGHT))
@@ -190,7 +191,7 @@ const int POV_STILL = -1;
 #ifdef USE_XBOX_FOR_CONTROLLER_2
 #endif // USE_XBOX_FOR_CONTROLLER_2
 
-#ifdef USE_L310_FOR_CONTROLLER_2
-#endif // USE_L310_FOR_CONTROLLER_2
+//#ifdef USE_L310_FOR_CONTROLLER_2
+//#endif // USE_L310_FOR_CONTROLLER_2
 
-#endif //ROBOT_PARAMS_H
+//#endif //ROBOT_PARAMS_H
