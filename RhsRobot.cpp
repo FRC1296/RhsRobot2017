@@ -21,8 +21,7 @@ RhsRobot::RhsRobot() {
 	pAutonomous = NULL;    // the object that executes anonymous behaviours
 	pDrivetrain = NULL;    // the object that drives the wheels
 	pClimber = NULL;
-	pHopper =NULL;
-	pGearIntake =NULL;
+	//pHopper =NULL;
 
     // set new object pointers to NULL here
 
@@ -80,10 +79,6 @@ void RhsRobot::Init() {
 	{
 		nextComponent = ComponentSet.insert(nextComponent, pClimber);
 	}
-	if(pGearIntake)
-	{
-		nextComponent = ComponentSet.insert(nextComponent, pGearIntake);
-	}
 	// instantiate our other objects here
 }
 
@@ -122,12 +117,19 @@ void RhsRobot::Run() {
 
 	if (pDrivetrain)
 	{
-		robotMessage.command = COMMAND_DRIVETRAIN_STOP;
-		pDrivetrain->SendMessage(&robotMessage);
-		robotMessage.command = COMMAND_DRIVETRAIN_DRIVE_TANK;
-		robotMessage.params.tankDrive.left = TANK_DRIVE_LEFT;
-		robotMessage.params.tankDrive.right = TANK_DRIVE_RIGHT;
-		pDrivetrain->SendMessage(&robotMessage);
+		if (TANK_DRIVE_STOP)
+		{
+			robotMessage.command = COMMAND_DRIVETRAIN_STOP;
+			pDrivetrain->SendMessage(&robotMessage);
+		}
+
+		else
+		{
+			robotMessage.command = COMMAND_DRIVETRAIN_DRIVE_TANK;
+			robotMessage.params.tankDrive.left = TANK_DRIVE_LEFT;
+			robotMessage.params.tankDrive.right = TANK_DRIVE_RIGHT;
+			pDrivetrain->SendMessage(&robotMessage);
+		}
 	}
 	if (pHopper)
 	{
@@ -174,28 +176,6 @@ void RhsRobot::Run() {
 		}
 
 	}
-
-	if (pGearIntake)
-		{
-			if (GEARINTAKE_RELEASE)
-			{
-				robotMessage.command = COMMAND_GEARINTAKE_RELEASE;
-				robotMessage.params.gearintake.GearIntakeRelease = 1.0;
-				pGearIntake->SendMessage(&robotMessage);
-			}
-			else if (GEARINTAKE_HOLD)
-			{
-				robotMessage.command = COMMAND_GEARINTAKE_HOLD;
-				robotMessage.params.gearintake.GearIntakeHold = 1.0;
-				pGearIntake->SendMessage(&robotMessage);
-			}
-			else
-			{
-				robotMessage.command = COMMAND_GEARINTAKE_STOP;
-				pGearIntake->SendMessage(&robotMessage);
-			}
-
-		}
 
 }
 

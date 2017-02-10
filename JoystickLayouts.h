@@ -36,8 +36,8 @@
 #define X3D_BTN_BSE_MD_RGHT	10
 #define X3D_BTN_BSE_CLS_LFT	11
 #define X3D_BTN_BSE_CLS_RGHT	12
-#define X3D_AXS_STCK_X		1
-#define X3D_AXS_STCK_Y		2			//Inverted
+#define X3D_AXS_STCK_X		0
+#define X3D_AXS_STCK_Y		1			//Inverted
 #define X3D_AXS_STCK_TWIST	3			//Untested
 #define X3D_AXS_THRTL		4			//Inverted
 #define X3D_AXS_HT_X		5
@@ -106,8 +106,8 @@
 #define L310_TRIGGER_LEFT			2	// value > 0
 #define L310_TRIGGER_RIGHT			3	// value < 0
 
-
-/* DPAD works like this (not sure which channel)
+/* 
+DPAD works like this (not sure which channel)
 
 -1: No Thumbpad Button
 0: North Thumbpad Button
@@ -118,6 +118,6 @@
 225: South-West Thumbpad Button
 270: West Thumbpad Button
 315: North-West Thumbpad Button 
-
 */
+
 #endif //JOYSTICK_LAYOUTS_H

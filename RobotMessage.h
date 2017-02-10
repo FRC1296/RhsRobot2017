@@ -53,10 +53,6 @@ enum MessageCommand {
 	COMMAND_CLIMBER_DOWN,
 	COMMAND_CLIMBER_STOP,
 
-	COMMAND_GEARINTAKE_RELEASE,
-	COMMAND_GEARINTAKE_HOLD,
-	COMMAND_GEARINTAKE_STOP,
-
 	COMMAND_UNKNOWN,					//!< COMMAND_UNKNOWN
 	COMMAND_SYSTEM_MSGTIMEOUT,			//!< COMMAND_SYSTEM_MSGTIMEOUT
 	COMMAND_SYSTEM_OK,					//!< COMMAND_SYSTEM_OK
@@ -101,12 +97,6 @@ struct ClimberParams
 	float ClimbDown;
 };
 
-struct GearIntakeParams
-{
-	float GearIntakeRelease;
-	float GearIntakeHold;
-};
-
 ///Used to deliver joystick readings to Drivetrain
 struct CheezyDriveParams {
 	float wheel;
@@ -143,7 +133,6 @@ union MessageParams {
 	AutonomousParams autonomous;
 	SystemParams system;
 	ClimberParams climber;
-	GearIntakeParams gearintake;
 };
 
 ///A structure containing a command, a set of parameters, and a reply id, sent between components

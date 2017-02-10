@@ -18,6 +18,7 @@
 Climber::Climber()
 : ComponentBase(CLIMBER_TASKNAME, CLIMBER_QUEUE, CLIMBER_PRIORITY)
 {
+	//TODO: add member objects
 	pClimberMotor1 = new CANTalon(CAN_CLIMBER_MOTOR1);
 	pClimberMotor2 = new CANTalon(CAN_CLIMBER_MOTOR2);
 
@@ -39,8 +40,8 @@ Climber::~Climber()
 {
 	//TODO delete member objects
 	delete(pTask);
-	delete pClimberMotor2;
 	delete pClimberMotor1;
+	delete pClimberMotor2;
 };
 
 void Climber::OnStateChange()

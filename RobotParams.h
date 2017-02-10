@@ -33,7 +33,6 @@ const int AUTOEXEC_PRIORITY 	= DEFAULT_PRIORITY;
 const int AUTOPARSER_PRIORITY 	= DEFAULT_PRIORITY;
 const int HOPPER_PRIORITY 	    = DEFAULT_PRIORITY;
 const int CLIMBER_PRIORITY    	= DEFAULT_PRIORITY;
-const int GEARINTAKE_PRIORITY	= DEFAULT_PRIORITY;
 
 //Task Names - Used when you view the task list but used by the operating system
 //EXAMPLE: const char* DRIVETRAIN_TASKNAME = "tDrive";
@@ -43,8 +42,7 @@ const char* const AUTONOMOUS_TASKNAME	= "tAuto";
 const char* const AUTOEXEC_TASKNAME		= "tAutoEx";
 const char* const AUTOPARSER_TASKNAME	= "tParse";
 const char* const HOPPER_TASKNAME	    = "tHopper";
-const char* const CLIMBER_TASKNAME      = "tClimber";
-const char* const GEARINTAKE_TASKNAME	= "tGearIntake";
+const char* const CLIMBER_TASKNAME      =  "tClimber";
 
 //TODO change these variables throughout the code to PIPE or whatever instead  of QUEUE
 //Queue Names - Used when you want to open the message queue for any task
@@ -57,7 +55,6 @@ const char* const AUTONOMOUS_QUEUE 	= "/tmp/qAuto";
 const char* const AUTOPARSER_QUEUE 	= "/tmp/qParse";
 const char* const HOPPER_QUEUE   	= "/tmp/qHopper";
 const char* const CLIMBER_QUEUE     = "/tmp/qClimber";
-const char* const GEARINTAKE_QUEUE  = "/tmp/qGearIntake";
 
 //PWM Channels - Assigns names to PWM ports 1-10 on the Roborio
 //EXAMPLE: const int PWM_DRIVETRAIN_FRONT_LEFT_MOTOR = 1;
@@ -69,9 +66,6 @@ const int PWM_DRIVETRAIN_RIGHT_MOTOR2 = 0;
 const int PWM_HOPPER_MOTOR            = 1;
 const int PWM_CLIMBER_MOTOR1          = 1;
 const int PWM_CLIMBER_MOTOR2          = 1;
-const int PWM_GEARINTAKE_MOTOR1		  = 1;
-const int PWM_GEARINTAKE_MOTOR2		  = 1;
-const int PWM_GEARINTAKE_MOTOR3		  = 1;
 
 //CAN IDs - Assigns names to the various CAN IDs
 //EXAMPLE: const int CAN_PDB = 0;
@@ -92,9 +86,7 @@ const int CAN_DRIVETRAIN_RIGHT_MOTOR2 = 4;
 const int CAN_HOPPER_MOTOR = 7;
 const int CAN_CLIMBER_MOTOR1 = 5;
 const int CAN_CLIMBER_MOTOR2 = 6;
-const int CAN_GEARINTAKE_MOTOR1 = 8;
-const int CAN_GEARINTAKE_MOTOR2 = 9;
-const int CAN_GEARINTAKE_MOTOR3 = 10;
+
 
 //Relay Channels - Assigns names to Relay ports 1-8 on the Roborio
 //EXAMPLE: const int RLY_COMPRESSOR = 1;
@@ -121,14 +113,14 @@ const int JOYSTICK_AXIS_COUNT = 5;
 const int POV_STILL = -1;
 
 //Primary Controller Mapping - Assigns action to buttons or axes on the first joystick
-#undef	USE_X3D_FOR_CONTROLLER_1
+#define	USE_X3D_FOR_CONTROLLER_1
 #undef	USE_XBOX_FOR_CONTROLLER_1
-#define	USE_L310_FOR_CONTROLLER_1
+#undef USE_L310_FOR_CONTROLLER_1
 
 //Secondary Controller Mapping - Assigns action to buttons or axes on the second joystick
 #undef	USE_X3D_FOR_CONTROLLER_2
-#undef 	USE_XBOX_FOR_CONTROLLER_2
-#define USE_L310_FOR_CONTROLLER_2
+#define USE_XBOX_FOR_CONTROLLER_2
+#undef USE_L310_FOR_CONTROLLER_2
 
 #ifdef USE_XBOX_FOR_CONTROLLER_1
 #endif
@@ -169,17 +161,20 @@ const int POV_STILL = -1;
   	RightTrigger				~~
  \endverbatim
  */
-#ifdef USE_L310_FOR_CONTROLLER_1
-//ID numbers for various buttons and axis
-#define TANK_DRIVE_LEFT_ID			L310_THUMBSTICK_LEFT_Y
-#define TANK_DRIVE_RIGHT_ID			L310_THUMBSTICK_RIGHT_Y
 
-#define TANK_DRIVE_LEFT				(pController_1->GetRawAxis(L310_THUMBSTICK_LEFT_Y))
-#define TANK_DRIVE_RIGHT			(-pController_1->GetRawAxis(L310_THUMBSTICK_RIGHT_Y))
+//ID numbers for various buttons and axis
+#define TANK_DRIVE_LEFT_ID			X3D_AXS_STCK_Y
+#define TANK_DRIVE_RIGHT_ID			X3D_AXS_STCK_Y
+
+#define TANK_DRIVE_LEFT				(pController_1->GetRawAxis(X3D_AXS_STCK_Y))
+#define TANK_DRIVE_RIGHT			(-pController_2->GetRawAxis(X3D_AXS_STCK_Y))
+
 #define CHEEZY_DRIVE_WHEEL			(pController_1->GetRawAxis(L310_THUMBSTICK_RIGHT_X))
 #define CHEEZY_DRIVE_THROTTLE		(-pController_1->GetRawAxis(L310_THUMBSTICK_LEFT_Y))
 #define CHEEZY_DRIVE_SPIN		    (-pController_1->GetRawAxis(L310_TRIGGER_LEFT) + Controller_1->GetRawAxis(L310_TRIGGER_RIGHT))
 #define CHEEZY_DRIVE_QUICKTURN		(pController_1->GetRawButton(L310_BUTTON_BUMPER_LEFT))
+
+#define TANK_DRIVE_STOP 			(pController_1->GetRawButton(L310_TRIGGER_LEFT))
 
 //hopper code
 #define HOPPER_UP					(pController_1->GetRawButton(L310_BUTTON_A))
@@ -187,40 +182,16 @@ const int POV_STILL = -1;
 
 #define CLIMBER_UP					(pController_1->GetRawButton(L310_BUTTON_BUMPER_LEFT))
 #define CLIMBER_DOWN				(pController_1->GetRawButton(L310_BUTTON_BUMPER_RIGHT))
-
-#define GEARINTAKE_RELEASE			(pController_1->GetRawButton(L310_TRIGGER_LEFT))
-#define GEARINTAKE_HOLD				(pController_1->GetRawButton(L310_TRIGGER_RIGHT))
 
 #endif // USE_L310_FOR_CONTROLLER_1
 
-#ifdef USE_X3D_FOR_CONTROLLER_2 //TODO: Configure this
-
-#define TANK_DRIVE_LEFT_ID			L310_THUMBSTICK_LEFT_Y
-#define TANK_DRIVE_RIGHT_ID			L310_THUMBSTICK_RIGHT_Y
-
-#define TANK_DRIVE_LEFT				(pController_1->GetRawAxis(L310_THUMBSTICK_LEFT_Y))
-#define TANK_DRIVE_RIGHT			(-pController_1->GetRawAxis(L310_THUMBSTICK_RIGHT_Y))
-#define CHEEZY_DRIVE_WHEEL			(pController_1->GetRawAxis(L310_THUMBSTICK_RIGHT_X))
-#define CHEEZY_DRIVE_THROTTLE		(-pController_1->GetRawAxis(L310_THUMBSTICK_LEFT_Y))
-#define CHEEZY_DRIVE_SPIN		    (-pController_1->GetRawAxis(L310_TRIGGER_LEFT) + Controller_1->GetRawAxis(L310_TRIGGER_RIGHT))
-#define CHEEZY_DRIVE_QUICKTURN		(pController_1->GetRawButton(L310_BUTTON_BUMPER_LEFT))
-
-//hopper code
-#define HOPPER_UP					(pController_1->GetRawButton(L310_BUTTON_A))
-#define HOPPER_DOWN					(pController_1->GetRawButton(L310_BUTTON_B))
-
-#define CLIMBER_UP					(pController_1->GetRawButton(L310_BUTTON_BUMPER_LEFT))
-#define CLIMBER_DOWN				(pController_1->GetRawButton(L310_BUTTON_BUMPER_RIGHT))
-
-#define GEARINTAKE_UP				(pController_1->GetRawButton(L310_TRIGGER_LEFT))
-#define GEARINTAKE_DOWN				(pController_1->GetRawButton(L310_TRIGGER_RIGHT))
-
+#ifdef USE_X3D_FOR_CONTROLLER_2
 #endif // USE_X3D_FOR_CONTROLLER_2
 
 #ifdef USE_XBOX_FOR_CONTROLLER_2
 #endif // USE_XBOX_FOR_CONTROLLER_2
 
-#ifdef USE_L310_FOR_CONTROLLER_2
-#endif // USE_L310_FOR_CONTROLLER_2
+//#ifdef USE_L310_FOR_CONTROLLER_2
+//#endif // USE_L310_FOR_CONTROLLER_2
 
-#endif //ROBOT_PARAMS_H
+//#endif //ROBOT_PARAMS_H

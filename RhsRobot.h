@@ -28,7 +28,6 @@ private:
 	Autonomous* pAutonomous;
 	Hopper* pHopper;
 	Climber* pClimber;
-	GearIntake* pGearIntake;
 
 	std::vector <ComponentBase *> ComponentSet;
 	
