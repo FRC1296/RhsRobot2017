@@ -195,3 +195,10 @@ const int POV_STILL = -1;
 //#endif // USE_L310_FOR_CONTROLLER_2
 
 //#endif //ROBOT_PARAMS_H
+#define ARCADE_DRIVE_VERTICAL			(pController_1->GetRawAxis(X3D_AXS_STCK_Y))
+#define ARCADE_DRIVE_HORIZONTAL		    (pController_1->GetRawAxis(X3D_AXS_STCK_X))
+
+
+
+
+
