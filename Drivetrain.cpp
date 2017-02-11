@@ -107,6 +107,8 @@ void Drivetrain::OnStateChange()
 void Drivetrain::Run() {
 double speedleft;
 double speedright;
+double J1;
+double J2;
 	switch(localMessage.command)
 	{
 		case COMMAND_DRIVETRAIN_DRIVE_TANK:  // move the robot in tank mode
@@ -116,10 +118,26 @@ double speedright;
 			//pLeftMotor2->Set(speedleft*-1);
 			pRightMotor1->Set(speedright*-1);
 			//pRightMotor2->Set(speedright*-1);
-			SmartDashboard::PutNumber("L1 (1)", pLeftMotor1->GetOutputCurrent());
+
+			/*SmartDashboard::PutNumber("L1 (1)", pLeftMotor1->GetOutputCurrent());
 			SmartDashboard::PutNumber("L2 (2)", pLeftMotor2->GetOutputCurrent());
 			SmartDashboard::PutNumber("R1 (3)", pRightMotor1->GetOutputCurrent());
 			SmartDashboard::PutNumber("R2 (4)", pRightMotor2->GetOutputCurrent());
+*/
+			break;
+
+		case COMMAND_DRIVETRAIN_DRIVE_ARCADE:
+			J1 = localMessage.params.arcadeDrive.vertical;
+			J2 = localMessage.params.arcadeDrive.horizontal;
+			speedleft =  tan((3.14159267/4)*(J1 - J2));
+			speedright = tan((3.14159267/4)*(J1 + J2));
+			SmartDashboard::PutNumber("LEFT", speedleft*-1);
+			SmartDashboard::PutNumber("HORIZONTAL", J2);
+			SmartDashboard::PutNumber("RIGHT", speedright);
+			pLeftMotor1->Set(speedleft*-1);
+			//pLeftMotor2->Set(speedleft*-1);
+			pRightMotor1->Set(speedright);
+			//pRightMotor2->Set(speedright*-1);
 
 			break;
 

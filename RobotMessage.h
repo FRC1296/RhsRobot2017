@@ -73,6 +73,7 @@ enum MessageCommand {
 
 	COMMAND_DRIVETRAIN_STOP,			//!< Tells Drivetrain to stop moving
 	COMMAND_DRIVETRAIN_DRIVE_TANK,		//!< Tells Drivetrain to use tank drive
+	COMMAND_DRIVETRAIN_DRIVE_ARCADE,	//!< Tells Drivetrain to use arcade drive
 
 	//add new component messages here
 
@@ -83,6 +84,11 @@ enum MessageCommand {
 struct TankDriveParams {
 	float left;
 	float right;
+};
+
+struct ArcadeDriveParams {
+	float horizontal;
+	float vertical;
 };
 
 struct HopperParams
@@ -129,6 +135,7 @@ struct AutonomousParams {
 union MessageParams {
 	HopperParams hopper;
 	TankDriveParams tankDrive;
+	ArcadeDriveParams arcadeDrive;
 	CheezyDriveParams cheezyDrive;
 	AutonomousParams autonomous;
 	SystemParams system;

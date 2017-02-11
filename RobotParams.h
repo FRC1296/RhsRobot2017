@@ -169,6 +169,9 @@ const int POV_STILL = -1;
 #define TANK_DRIVE_LEFT				(pController_1->GetRawAxis(X3D_AXS_STCK_Y))
 #define TANK_DRIVE_RIGHT			(-pController_2->GetRawAxis(X3D_AXS_STCK_Y))
 
+#define ARCADE_DRIVE_VERTICAL			(pController_1->GetRawAxis(X3D_AXS_STCK_Y))
+#define ARCADE_DRIVE_HORIZONTAL		    (pController_1->GetRawAxis(X3D_AXS_STCK_X))
+
 #define CHEEZY_DRIVE_WHEEL			(pController_1->GetRawAxis(L310_THUMBSTICK_RIGHT_X))
 #define CHEEZY_DRIVE_THROTTLE		(-pController_1->GetRawAxis(L310_THUMBSTICK_LEFT_Y))
 #define CHEEZY_DRIVE_SPIN		    (-pController_1->GetRawAxis(L310_TRIGGER_LEFT) + Controller_1->GetRawAxis(L310_TRIGGER_RIGHT))
@@ -195,10 +198,5 @@ const int POV_STILL = -1;
 //#endif // USE_L310_FOR_CONTROLLER_2
 
 //#endif //ROBOT_PARAMS_H
-#define ARCADE_DRIVE_VERTICAL			(pController_1->GetRawAxis(X3D_AXS_STCK_Y))
-#define ARCADE_DRIVE_HORIZONTAL		    (pController_1->GetRawAxis(X3D_AXS_STCK_X))
-
-
-
 
 

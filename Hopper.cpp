@@ -65,7 +65,7 @@ void Hopper::Run()
 	{
 	//TODO add command cases for Hopper
 		SmartDashboard::PutNumber("Climber1 (1)", pHopperMotor->GetOutputCurrent());
-		float StopMotor = SmartDashboard::PutNumber("Climber1 (1)", pHopperMotor->GetOutputCurrent());
+	/*	float StopMotor = SmartDashboard::PutNumber("Climber1 (1)", pHopperMotor->GetOutputCurrent());
 		if(StopMotor >= 40)
 		{
 			pHopperMotor->Set(0);
@@ -83,6 +83,6 @@ void Hopper::Run()
 			case COMMAND_HOPPER_STOP:
 				pHopperMotor->Set(0);
 				break;
-		}
+		}*/
 	}
 };
