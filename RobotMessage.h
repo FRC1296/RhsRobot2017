@@ -89,6 +89,8 @@ struct TankDriveParams {
 struct ArcadeDriveParams {
 	float horizontal;
 	float vertical;
+	float velocity;
+	int position;
 };
 
 struct HopperParams

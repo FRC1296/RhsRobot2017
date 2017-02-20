@@ -127,10 +127,12 @@ void RhsRobot::Run() {
 		{
 			/*robotMessage.command = COMMAND_DRIVETRAIN_DRIVE_TANK;
 			robotMessage.params.tankDrive.left = TANK_DRIVE_LEFT;
-			//robotMessage.params.tankDrive.right = TANK_DRIVE_RIGHT; */
+			robotMessage.params.tankDrive.right = TANK_DRIVE_RIGHT;*/
 			robotMessage.command = COMMAND_DRIVETRAIN_DRIVE_ARCADE;
 			robotMessage.params.arcadeDrive.vertical = ARCADE_DRIVE_VERTICAL;
 			robotMessage.params.arcadeDrive.horizontal = ARCADE_DRIVE_HORIZONTAL;
+			//robotMessage.params.arcadeDrive.velocity = ;
+			//robotMessage.params.arcadeDrive.position = ;
 			pDrivetrain->SendMessage(&robotMessage);
 		}
 	}

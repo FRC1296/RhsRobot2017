@@ -46,6 +46,7 @@ Drivetrain::Drivetrain() :
 
 	pLeftMotor1->ConfigNeutralMode(CANTalon::kNeutralMode_Brake);
 	pLeftMotor1->SetControlMode(CANTalon::kPercentVbus);
+	pLeftMotor1->SetFeedbackDevice(CANTalon::QuadEncoder);
 
 	pLeftMotor2->SetControlMode(CANTalon::kFollower);
 	pLeftMotor2->Set(CAN_DRIVETRAIN_LEFT_MOTOR1);
@@ -54,12 +55,14 @@ Drivetrain::Drivetrain() :
 
 	pRightMotor1->ConfigNeutralMode(CANTalon::kNeutralMode_Brake);
 	pRightMotor1->SetControlMode(CANTalon::kPercentVbus);
+	pRightMotor1->SetFeedbackDevice(CANTalon::QuadEncoder);
 
 	pRightMotor2->SetControlMode(CANTalon::kFollower);
 	pRightMotor2->Set(CAN_DRIVETRAIN_RIGHT_MOTOR1);
 
 	pGyro = new ADXRS453Z();
 	wpi_assert(pGyro);
+	pGyro->Zero();
 
 	pTask = new std::thread(&Drivetrain::StartTask, this,
 			DRIVETRAIN_TASKNAME, DRIVETRAIN_PRIORITY);
@@ -109,6 +112,12 @@ double speedleft;
 double speedright;
 double J1;
 double J2;
+double leftVelocity;
+double rightVelocity;
+int leftPosition;
+int rightPosition;
+float angle;
+
 	switch(localMessage.command)
 	{
 		case COMMAND_DRIVETRAIN_DRIVE_TANK:  // move the robot in tank mode
@@ -118,22 +127,39 @@ double J2;
 			//pLeftMotor2->Set(speedleft*-1);
 			pRightMotor1->Set(speedright*-1);
 			//pRightMotor2->Set(speedright*-1);
+			SmartDashboard::PutNumber("tank LEFT", speedleft);
+			SmartDashboard::PutNumber("tank RIGHT", speedright);
 
-			/*SmartDashboard::PutNumber("L1 (1)", pLeftMotor1->GetOutputCurrent());
+			SmartDashboard::PutNumber("L1 (1)", pLeftMotor1->GetOutputCurrent());
 			SmartDashboard::PutNumber("L2 (2)", pLeftMotor2->GetOutputCurrent());
 			SmartDashboard::PutNumber("R1 (3)", pRightMotor1->GetOutputCurrent());
 			SmartDashboard::PutNumber("R2 (4)", pRightMotor2->GetOutputCurrent());
-*/
+
+
+
 			break;
 
 		case COMMAND_DRIVETRAIN_DRIVE_ARCADE:
 			J1 = localMessage.params.arcadeDrive.vertical;
 			J2 = localMessage.params.arcadeDrive.horizontal;
-			speedleft =  tan((3.14159267/4)*(J1 - J2));
-			speedright = tan((3.14159267/4)*(J1 + J2));
+			speedleft =  (J1 - J2);
+			speedright = (J1 + J2);
 			SmartDashboard::PutNumber("LEFT", speedleft*-1);
 			SmartDashboard::PutNumber("HORIZONTAL", J2);
 			SmartDashboard::PutNumber("RIGHT", speedright);
+
+			leftVelocity=pLeftMotor1->GetEncVel();
+			rightVelocity=pRightMotor1->GetEncVel();
+			leftPosition=pLeftMotor1->GetEncPosition();
+			rightPosition=pRightMotor1->GetEncPosition();
+			SmartDashboard::PutNumber("LEFT VELOCITY", leftVelocity);
+			SmartDashboard::PutNumber("RIGHT VELOCITY", rightVelocity);
+			SmartDashboard::PutNumber("LEFT POSITION", leftPosition);
+			SmartDashboard::PutNumber("RIGHT POSITION", rightPosition);
+
+			angle = pGyro->GetAngle();
+			SmartDashboard::PutNumber("GYRO ANGLE", angle);
+
 			pLeftMotor1->Set(speedleft*-1);
 			//pLeftMotor2->Set(speedleft*-1);
 			pRightMotor1->Set(speedright);
