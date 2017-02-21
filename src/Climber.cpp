@@ -23,14 +23,15 @@ Climber::Climber()
 	pClimberMotor2 = new CANTalon(CAN_CLIMBER_MOTOR_SLAVE);
 
 	pClimberMotor1->SetVoltageRampRate(48.0);
+	pClimberMotor2->SetVoltageRampRate(48.0);
 
 	wpi_assert(pClimberMotor1 && pClimberMotor2);
 
 	pClimberMotor1->ConfigNeutralMode(CANTalon::kNeutralMode_Brake);
 	pClimberMotor1->SetControlMode(CANTalon::kPercentVbus);
 
-	pClimberMotor2->SetControlMode(CANTalon::kFollower);
-	pClimberMotor2->Set(CAN_CLIMBER_MOTOR);
+	pClimberMotor2->ConfigNeutralMode(CANTalon::kNeutralMode_Brake);
+	pClimberMotor2->SetControlMode(CANTalon::kPercentVbus);
 
 	pTask = new std::thread(&Climber::StartTask, this, CLIMBER_TASKNAME, CLIMBER_PRIORITY);
 	wpi_assert(pTask);
@@ -79,15 +80,18 @@ void Climber::Run()
 		{
 	//TODO add command cases for Climber
 			case COMMAND_CLIMBER_UP:
-				pClimberMotor1->Set(localMessage.params.climber.ClimbUp*-1);
+				pClimberMotor1->Set(localMessage.params.climber.ClimbUp);
+				pClimberMotor2->Set(localMessage.params.climber.ClimbUp*-1);
 				break;
 
 			case COMMAND_CLIMBER_DOWN:
-				pClimberMotor1->Set(localMessage.params.climber.ClimbDown*-1);
+				pClimberMotor1->Set(localMessage.params.climber.ClimbDown);
+				pClimberMotor2->Set(localMessage.params.climber.ClimbDown*-1);
 				break;
 
 			case COMMAND_CLIMBER_STOP:
 				pClimberMotor1->Set(0);
+				pClimberMotor2->Set(0);
 				break;
 
 			case COMMAND_SYSTEM_MSGTIMEOUT:  // what should we do if we do not get a timely message?
