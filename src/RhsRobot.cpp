@@ -122,7 +122,7 @@ void RhsRobot::Run() {
 		}
 	}
 
-	if (pDrivetrain)
+/*	if (pDrivetrain)
 	{
 		if(TANK_DRIVE_STOP)
 		{
@@ -136,7 +136,7 @@ void RhsRobot::Run() {
 			robotMessage.params.tankDrive.right = TANK_DRIVE_RIGHT;
 			pDrivetrain->SendMessage(&robotMessage);
 		}
-	}
+	}*/
 /*	if (pHopper)
 	{
 		if (HOPPER_UP)
@@ -163,18 +163,18 @@ void RhsRobot::Run() {
 */
 	if (pClimber)
 	{
-		if (CLIMBER_UP)
+		if (CLIMBER_TRUE)
 		{
-			robotMessage.command = COMMAND_CLIMBER_UP;
-			robotMessage.params.climber.ClimbUp = 1.0;
+			robotMessage.command = COMMAND_CLIMBER_TRUE;
+			robotMessage.params.climber.ClimbUp = CLIMBER_UP;
 			pClimber->SendMessage(&robotMessage);
 		}
-		else if (CLIMBER_DOWN)
+		/*else if (CLIMBER_DOWN)
 		{
 			robotMessage.command = COMMAND_CLIMBER_DOWN;
 			robotMessage.params.climber.ClimbDown = -.2;
 			pClimber->SendMessage(&robotMessage);
-		}
+		}*/
 		else
 		{
 			robotMessage.command = COMMAND_CLIMBER_STOP;

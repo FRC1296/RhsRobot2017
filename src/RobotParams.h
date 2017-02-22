@@ -183,8 +183,9 @@ const int POV_STILL = -1;
 #define HOPPER_UP					(pController_1->GetRawButton(L310_BUTTON_A)) // Unused
 #define HOPPER_DOWN					(pController_1->GetRawButton(L310_BUTTON_B)) // Unused
 
-#define CLIMBER_UP					(pController_1->GetRawButton(L310_BUTTON_BUMPER_LEFT))
-#define CLIMBER_DOWN				(pController_1->GetRawButton(L310_BUTTON_BUMPER_RIGHT))
+#define CLIMBER_TRUE				(pController_1->GetRawButton(L310_BUTTON_BUMPER_RIGHT))
+#define CLIMBER_UP					(pController_1->GetRawAxis(L310_THUMBSTICK_RIGHT_Y))
+#define CLIMBER_DOWN				(pController_1->GetRawAxis(L310_THUMBSTICK_RIGHT_Y))
 
 #define GEAR_INTAKE_HOLD			(pController_1->GetRawButton(L310_BUTTON_A))
 #define GEAR_INTAKE_RELEASE			(pController_1->GetRawButton(L310_BUTTON_B))
