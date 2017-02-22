@@ -79,6 +79,9 @@ enum MessageCommand {
 	COMMAND_GEARINTAKE_RELEASE,
 	COMMAND_GEARINTAKE_STOP,
 
+	COMMAND_FUELINTAKE_ON,
+	COMMAND_FUELINTAKE_STOP,
+
 	//add new component messages here
 
 	COMMAND_COMPONENT_TEST,				//!< COMMAND_COMPONENT_TEST
@@ -133,6 +136,10 @@ struct GearIntakeParams {
 	float GearRelease;
 };
 
+struct FuelIntakeParams {
+	float fuelOn;
+};
+
 ///Contains all the parameter structures contained in a message
 union MessageParams {
 	TankDriveParams tankDrive;
@@ -142,6 +149,7 @@ union MessageParams {
 	ClimberParams climber;
 	HopperParams hopper;
 	GearIntakeParams gear;
+	FuelIntakeParams fuel;
 };
 
 ///A structure containing a command, a set of parameters, and a reply id, sent between components

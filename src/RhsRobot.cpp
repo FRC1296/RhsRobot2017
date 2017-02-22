@@ -86,6 +86,11 @@ void RhsRobot::Init() {
 	{
 		nextComponent = ComponentSet.insert(nextComponent, pGearIntake);
 	}
+
+	if (pFuelIntake)
+	{
+		nextComponent = ComponentSet.insert(nextComponent, pFuelIntake);
+	}
 	// instantiate our other objects here
 }
 
@@ -200,6 +205,21 @@ void RhsRobot::Run() {
 		{
 			robotMessage.command = COMMAND_GEARINTAKE_STOP;
 			pGearIntake->SendMessage(&robotMessage);
+		}
+	}
+
+	if (pFuelIntake)
+	{
+		if (FUEL_INTAKE_ON)
+		{
+			robotMessage.command = COMMAND_FUELINTAKE_ON;
+			robotMessage.params.fuel.fuelOn = 1.0;
+			pFuelIntake->SendMessage(&robotMessage);
+		}
+		else
+		{
+			robotMessage.command = COMMAND_FUELINTAKE_STOP;
+			pFuelIntake->SendMessage(&robotMessage);
 		}
 	}
 }

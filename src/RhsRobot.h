@@ -15,6 +15,7 @@
 // #include "Hopper.h"
 #include "Climber.h"
 #include "GearIntake.h"
+#include "FuelIntake.h"
 
 class RhsRobot : public RhsRobotBase
 {
@@ -30,6 +31,7 @@ private:
 	Climber* pClimber;
 //	Hopper* pHopper;
 	GearIntake* pGearIntake;
+	FuelIntake* pFuelIntake;
 
 	std::vector <ComponentBase *> ComponentSet;
 	

@@ -41,8 +41,8 @@ Climber::~Climber()
 {
 	//TODO delete member objects
 	delete(pTask);
-	delete pClimberMotor1;
 	delete pClimberMotor2;
+	delete pClimberMotor1;
 };
 
 void Climber::OnStateChange()
