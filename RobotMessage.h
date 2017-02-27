@@ -66,6 +66,18 @@ enum MessageCommand {
 	COMMAND_DRIVETRAIN_DRIVE_TANK,		//!< Tells Drivetrain to use tank drive
 	COMMAND_DRIVETRAIN_DRIVE_CHEEZY,    //!< Tells Drivetrain to use cheesy drive
 
+	COMMAND_HOPPER_UP,
+	COMMAND_HOPPER_DOWN,
+	COMMAND_HOPPER_STOP,
+
+	COMMAND_CLIMBER_UP,
+	COMMAND_CLIMBER_DOWN,
+	COMMAND_CLIMBER_STOP,
+
+	COMMAND_GEARINTAKE_HOLD,
+	COMMAND_GEARINTAKE_RELEASE,
+	COMMAND_GEARINTAKE_STOP,
+
 	//add new component messages here
 
 	COMMAND_COMPONENT_TEST,				//!< COMMAND_COMPONENT_TEST
@@ -82,6 +94,21 @@ struct CheezyDriveParams {
 	float wheel;
 	float throttle;
 	bool bQuickturn;
+};
+
+struct ClimberParams {
+	float ClimbUp;
+	float ClimbDown;
+};
+
+struct HopperParams {
+	float HopUp;
+	float HopDown;
+};
+
+struct GearIntakeParams {
+	float GearHold;
+	float GearRelease;
 };
 
 struct SystemParams {
@@ -110,6 +137,9 @@ union MessageParams {
 	TankDriveParams tankDrive;
 	CheezyDriveParams cheezyDrive;
 	AutonomousParams autonomous;
+	ClimberParams climber;
+	HopperParams hopper;
+	GearIntakeParams gear;
 	SystemParams system;
 };
 

@@ -20,6 +20,14 @@ RhsRobot::RhsRobot() {
 	pController_2 = NULL;  // driver number two's joystick
 	pAutonomous = NULL;    // the object that executes anonymous behaviours
 	pDrivetrain = NULL;    // the object that drives the wheels
+	pClimber = NULL;
+	pHopper = NULL;
+	pGearIntake = NULL;
+
+	bHopperRunning = false;
+
+	camera = CameraServer::GetInstance()->StartAutomaticCapture();
+	camera.SetVideoMode(cs::VideoMode::kMJPEG, 320, 240, 15);
 
     // set new object pointers to NULL here
 
@@ -41,6 +49,13 @@ RhsRobot::~RhsRobot() {
 	delete pController_2;
 
 	// delete other system objects here (but not our message-based objects)
+
+	delete pAutonomous;
+	delete pDrivetrain;
+	delete pClimber;
+	delete pHopper;
+	delete pGearIntake;
+
 }
 
 void RhsRobot::Init() {
@@ -52,6 +67,9 @@ void RhsRobot::Init() {
 	pController_1 = new Joystick(0);
 	pController_2 = new Joystick(1);
 	pDrivetrain = new Drivetrain();
+//	pClimber = new Climber();
+	pHopper = new Hopper();
+//	pGearIntake = new GearIntake();
 	pAutonomous = new Autonomous();
 
 	std::vector<ComponentBase *>::iterator nextComponent = ComponentSet.begin();
@@ -64,6 +82,21 @@ void RhsRobot::Init() {
 	if(pDrivetrain)
 	{
 		nextComponent = ComponentSet.insert(nextComponent, pDrivetrain);
+	}
+
+	if(pHopper)
+	{
+		nextComponent = ComponentSet.insert(nextComponent, pHopper);
+	}
+
+	if(pClimber)
+	{
+		nextComponent = ComponentSet.insert(nextComponent, pClimber);
+	}
+
+	if (pGearIntake)
+	{
+		nextComponent = ComponentSet.insert(nextComponent, pGearIntake);
 	}
 
 	// instantiate our other objects here
@@ -104,17 +137,80 @@ void RhsRobot::Run() {
 
 	if (pDrivetrain)
 	{
-		if(TANK_DRIVE_STOP)
+		robotMessage.command = COMMAND_DRIVETRAIN_DRIVE_CHEEZY;
+		 			robotMessage.params.cheezyDrive.wheel = CHEEZY_DRIVE_WHEEL;
+		 			robotMessage.params.cheezyDrive.throttle = CHEEZY_DRIVE_THROTTLE;
+		 			robotMessage.params.cheezyDrive.bQuickturn = CHEEZY_DRIVE_QUICKTURN;
+		 			pDrivetrain->SendMessage(&robotMessage);
+	}
+
+	if (pHopper)
+	{
+		if (HOPPER_UP)
 		{
-			robotMessage.command = COMMAND_DRIVETRAIN_STOP;
-			pDrivetrain->SendMessage(&robotMessage);
+			bHopperRunning = true;
+		}
+		else if (HOPPER_DOWN)
+		{
+			bHopperRunning = false;
 		}
 		else
 		{
-			robotMessage.command = COMMAND_DRIVETRAIN_DRIVE_TANK;
-			robotMessage.params.tankDrive.left = TANK_DRIVE_LEFT;
-			robotMessage.params.tankDrive.right = TANK_DRIVE_RIGHT;
-			pDrivetrain->SendMessage(&robotMessage);
+			if(bHopperRunning)
+			{
+				robotMessage.command = COMMAND_HOPPER_UP;
+				robotMessage.params.hopper.HopUp = 1.0;
+				pHopper->SendMessage(&robotMessage);
+			}
+			else
+			{
+				robotMessage.command = COMMAND_HOPPER_STOP;
+				pHopper->SendMessage(&robotMessage);
+			}
+		}
+	}
+
+
+
+	if (pClimber)
+	{
+		if (CLIMBER_UP)
+		{
+			robotMessage.command = COMMAND_CLIMBER_UP;
+			robotMessage.params.climber.ClimbUp = 1.0;
+			pClimber->SendMessage(&robotMessage);
+		}
+		else if (CLIMBER_DOWN)
+		{
+			robotMessage.command = COMMAND_CLIMBER_DOWN;
+			robotMessage.params.climber.ClimbDown = -.2;
+			pClimber->SendMessage(&robotMessage);
+		}
+		else
+		{
+			robotMessage.command = COMMAND_CLIMBER_STOP;
+			pClimber->SendMessage(&robotMessage);
+		}
+	}
+
+	if (pGearIntake)
+	{
+		if (GEAR_INTAKE_HOLD)
+		{
+			robotMessage.command = COMMAND_GEARINTAKE_HOLD;
+			robotMessage.params.gear.GearHold = 1.0;
+			pGearIntake->SendMessage(&robotMessage);
+		}
+		else if (GEAR_INTAKE_RELEASE)
+		{
+			robotMessage.command = COMMAND_GEARINTAKE_RELEASE;
+			robotMessage.params.gear.GearRelease = -.2;
+			pGearIntake->SendMessage(&robotMessage);
+		}
+		else
+		{
+			robotMessage.command = COMMAND_GEARINTAKE_STOP;
+			pGearIntake->SendMessage(&robotMessage);
 		}
 	}
 }
