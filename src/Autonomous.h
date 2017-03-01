@@ -64,6 +64,9 @@ private:
 	bool Finish();
 	bool Begin(char *);
 	bool End(char *);
+	bool MeasuredMove(float);
+	bool Gear_Release(void);
+	bool Gear_Hold(void);
 
 	bool CommandResponse(const char *szQueueName);
 	bool CommandNoResponse(const char *szQueueName);

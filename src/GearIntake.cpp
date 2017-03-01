@@ -19,14 +19,14 @@
 GearIntake::GearIntake()
 : ComponentBase(GEARINTAKE_TASKNAME, GEARINTAKE_QUEUE, GEARINTAKE_PRIORITY)
 {
-	pGearIntakeMotor1 = new CANTalon(CAN_GEARINTAKE_MOTOR1);
+	pGearIntakeMotor = new CANTalon(CAN_GEARINTAKE_MOTOR);
 
-	pGearIntakeMotor1->SetVoltageRampRate(48.0);
+	pGearIntakeMotor->SetVoltageRampRate(48.0);
 
-	wpi_assert(pGearIntakeMotor1);
+	wpi_assert(pGearIntakeMotor);
 
-	pGearIntakeMotor1->ConfigNeutralMode(CANTalon::kNeutralMode_Brake);
-	pGearIntakeMotor1->SetControlMode(CANTalon::kPercentVbus);
+	pGearIntakeMotor->ConfigNeutralMode(CANTalon::kNeutralMode_Brake);
+	pGearIntakeMotor->SetControlMode(CANTalon::kPercentVbus);
 
 	pTask = new std::thread(&GearIntake::StartTask, this, GEARINTAKE_TASKNAME, GEARINTAKE_PRIORITY);
 	wpi_assert(pTask);
@@ -36,7 +36,7 @@ GearIntake::~GearIntake()
 {
 	//TODO delete member objects
 	delete(pTask);
-	delete pGearIntakeMotor1;
+	delete pGearIntakeMotor;
 };
 
 void GearIntake::OnStateChange()
@@ -68,15 +68,15 @@ void GearIntake::Run()
 	switch(localMessage.command)			//Reads the message command
 	{
 		case COMMAND_GEARINTAKE_RELEASE:
-						pGearIntakeMotor1->Set(localMessage.params.gear.GearRelease*-1);
+						pGearIntakeMotor->Set(localMessage.params.gear.GearRelease);
 						break;
 
 		case COMMAND_GEARINTAKE_HOLD:
-						pGearIntakeMotor1->Set(localMessage.params.gear.GearHold*-1);
+						pGearIntakeMotor->Set(-localMessage.params.gear.GearHold);
 						break;
 
 	    case COMMAND_GEARINTAKE_STOP:
-						pGearIntakeMotor1->Set(0);
+						pGearIntakeMotor->Set(0);
 						break;
 
 	    case COMMAND_SYSTEM_MSGTIMEOUT:  //what should we do if we do not get a timely message?
@@ -86,3 +86,4 @@ void GearIntake::Run()
 			break;
 		}
 };
+

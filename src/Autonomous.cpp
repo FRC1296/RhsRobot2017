@@ -173,4 +173,31 @@ bool Autonomous::End(char *pCurrLinePos)
 	return (true);
 }
 
+bool Autonomous::MeasuredMove(float fDistance)
+{
+	// move measure distance forward/backward
+
+	Message.command = COMMAND_DRIVETRAIN_MMOVE;
+	Message.params.measuredMove.fDistance = fDistance;
+	CommandResponse(DRIVETRAIN_QUEUE);
+	return (true);
+}
+
+bool Autonomous::Gear_Release()
+{
+	// move measure distance forward/backward
+
+	Message.command = COMMAND_GEARINTAKE_RELEASE;
+	CommandNoResponse(DRIVETRAIN_QUEUE);
+	return (true);
+}
+
+bool Autonomous::Gear_Hold()
+{
+	// move measure distance forward/backward
+
+	Message.command = COMMAND_GEARINTAKE_HOLD;
+	CommandNoResponse(DRIVETRAIN_QUEUE);
+	return (true);
+}
 

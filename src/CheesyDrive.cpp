@@ -11,21 +11,21 @@
 #include "WPILib.h"
 #include "CheesyDrive.h"
 
-CheezyLoop::CheezyLoop()
+CheesyLoop::CheesyLoop()
 {
 	bOutputEnabled = false;
 	CheezyInit1296();  // initialize the cheezy drive code base
 
-	pTask = new std::thread(&CheezyLoop::StartTask, this, CHEESY_TASKNAME, CHEESY_PRIORITY);
+	pTask = new std::thread(&CheesyLoop::StartTask, this, CHEESY_TASKNAME, CHEESY_PRIORITY);
 }
 
-CheezyLoop::~CheezyLoop(){
+CheesyLoop::~CheesyLoop()
+{
 	delete pTask;
 }
 
-void CheezyLoop::Run(void)
+void CheesyLoop::Run(void)
 {
-
 	 while(true)
 	 {
 		 Wait(0.005);
@@ -50,8 +50,7 @@ void CheezyLoop::Run(void)
 }
 
 
-
-void CheezyLoop::Update(const DrivetrainGoal &goal,
+void CheesyLoop::Update(const DrivetrainGoal &goal,
     const DrivetrainPosition &position,
     DrivetrainOutput &output,
     DrivetrainStatus &status,

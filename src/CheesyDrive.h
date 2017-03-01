@@ -18,7 +18,7 @@
 #include <WPILib.h>
 #include "RobotParams.h"
 
-// Structs to carry information about the drivetrain - must match cheezy code
+// Structures to carry information about the drivetrain - must match cheezy code
 
 struct DrivetrainGoal {
     double steering;
@@ -61,26 +61,17 @@ struct DrivetrainStatus {
     bool output_was_capped;
   };
 
-extern "C" void CheezyInit1296(void);
-
-extern "C" void CheezyIterate1296(
-    const DrivetrainGoal *goal,
-    const DrivetrainPosition *position,
-    DrivetrainOutput *output,
-    DrivetrainStatus *status);
-
-
-class CheezyLoop {
+class CheesyLoop {
 
  public:
+	CheesyLoop();
+ 	~CheesyLoop();
 
- 	CheezyLoop();
- 	~CheezyLoop();
 	static void *StartTask(void *pThis, const char* szComponentName, int iPriority)
 	{
 		pthread_setname_np(pthread_self(), szComponentName);
 		pthread_setschedprio(pthread_self(), iPriority);
-		((CheezyLoop *)pThis)->Run();
+		((CheesyLoop *)pThis)->Run();
 		return(NULL);
 	}
 
@@ -107,6 +98,15 @@ class CheezyLoop {
  		         DrivetrainOutput *output,
  		         DrivetrainStatus *status);
  };
+
+extern "C" void CheezyInit1296(void);
+
+extern "C" void CheezyIterate1296(
+    const DrivetrainGoal *goal,
+    const DrivetrainPosition *position,
+    DrivetrainOutput *output,
+    DrivetrainStatus *status);
+
 
 
 #endif			//CHEESYDRIVE_H

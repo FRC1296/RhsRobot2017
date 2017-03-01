@@ -21,6 +21,9 @@ typedef enum AUTO_COMMAND_TOKENS
 	AUTO_TOKEN_BEGIN,				//!<	mark beginning of mode block
 	AUTO_TOKEN_END,					//!<	mark end of mode block
 	AUTO_TOKEN_DELAY,				//!<	delay (seconds - float)
+	AUTO_TOKEN_MMOVE,				//!<    MMove <distance in inches>
+	AUTO_TOKEN_GEAR_RELEASE, 		//!<    opens hopper
+	AUTO_TOKEN_GEAR_HOLD,		//!< 	closes hopper
 	AUTO_TOKEN_LAST
 } AUTO_COMMAND_TOKENS;
 

@@ -38,7 +38,7 @@ const float REVSPERFOOT = (3.141519 * 6.0 / 12.0);
 const double METERS_PER_COUNT = (REVSPERFOOT * 0.3048 / (double)TALON_COUNTSPERREV);
 
 
-class CheezyLoop;
+class CheesyLoop;
 
 class Drivetrain : public ComponentBase
 {
@@ -67,7 +67,7 @@ private:
 	ADXRS453Z *pGyro;
 	float fBatteryVoltage;
 	bool bUnderServoControl;
-	CheezyLoop *pCheezy;
+	CheesyLoop *pCheezy;
 };
 
 #endif			//DRIVETRAIN_H

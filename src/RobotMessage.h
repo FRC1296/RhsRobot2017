@@ -65,6 +65,7 @@ enum MessageCommand {
 	COMMAND_DRIVETRAIN_STOP,			//!< Tells Drivetrain to stop moving
 	COMMAND_DRIVETRAIN_DRIVE_TANK,		//!< Tells Drivetrain to use tank drive
 	COMMAND_DRIVETRAIN_DRIVE_CHEEZY,    //!< Tells Drivetrain to use cheesy drive
+	COMMAND_DRIVETRAIN_MMOVE,    		//!< Tells Drivetrain to move a measured distance
 
 	COMMAND_HOPPER_UP,
 	COMMAND_HOPPER_DOWN,
@@ -72,15 +73,11 @@ enum MessageCommand {
 
 	COMMAND_CLIMBER_UP,
 	COMMAND_CLIMBER_DOWN,
-	COMMAND_CLIMBER_TRUE,
 	COMMAND_CLIMBER_STOP,
 
 	COMMAND_GEARINTAKE_HOLD,
 	COMMAND_GEARINTAKE_RELEASE,
 	COMMAND_GEARINTAKE_STOP,
-
-	COMMAND_FUELINTAKE_ON,
-	COMMAND_FUELINTAKE_STOP,
 
 	//add new component messages here
 
@@ -98,6 +95,26 @@ struct CheezyDriveParams {
 	float wheel;
 	float throttle;
 	bool bQuickturn;
+};
+
+// used to deliver autonomous measured move command
+struct MeasuredMoveParams {
+	float fDistance;
+};
+
+struct ClimberParams {
+	float ClimbUp;
+	float ClimbDown;
+};
+
+struct HopperParams {
+	float HopUp;
+	float HopDown;
+};
+
+struct GearIntakeParams {
+	float GearHold;
+	float GearRelease;
 };
 
 struct SystemParams {
@@ -121,35 +138,16 @@ struct AutonomousParams {
 	float driveTime;
 };
 
-struct ClimberParams {
-	float ClimbUp;
-	float ClimbDown;
-};
-
-struct HopperParams {
-	float HopUp;
-	float HopDown;
-};
-
-struct GearIntakeParams {
-	float GearHold;
-	float GearRelease;
-};
-
-struct FuelIntakeParams {
-	float fuelOn;
-};
-
 ///Contains all the parameter structures contained in a message
 union MessageParams {
 	TankDriveParams tankDrive;
 	CheezyDriveParams cheezyDrive;
+	MeasuredMoveParams measuredMove;
 	AutonomousParams autonomous;
-	SystemParams system;
 	ClimberParams climber;
 	HopperParams hopper;
 	GearIntakeParams gear;
-	FuelIntakeParams fuel;
+	SystemParams system;
 };
 
 ///A structure containing a command, a set of parameters, and a reply id, sent between components

@@ -2,7 +2,7 @@
  * Implementation of class to drive the pallet jack.
  *
  * This class is derived from the standard Component base class and includes
- * initialization for the devices used to control the pallet jack's wheels.
+ * initialization for the devices used to control the robot's wheels.
  *
  * The task receives messages form the main robot class and runs the wheels.
  * Special commands use a pGyro and quadrature encoder to drive straight X feet
@@ -78,7 +78,7 @@ Drivetrain::Drivetrain() :
 	wpi_assert(pRightMotorSlave->IsAlive());
 	bUnderServoControl = false;
 
-	pCheezy = new CheezyLoop();
+	pCheezy = new CheesyLoop();
 
 	pGyro = new ADXRS453Z();
 	wpi_assert(pGyro);

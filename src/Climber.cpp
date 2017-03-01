@@ -1,3 +1,6 @@
+
+
+
 /** \file
  * Example of subsystem task behavior.
  *
@@ -41,8 +44,8 @@ Climber::~Climber()
 {
 	//TODO delete member objects
 	delete(pTask);
-	delete pClimberMotor2;
 	delete pClimberMotor1;
+	delete pClimberMotor2;
 };
 
 void Climber::OnStateChange()
@@ -82,20 +85,18 @@ void Climber::Run()
 
 	else
 	{
-
 		switch(localMessage.command)			//Reads the message command
 		{
 	//TODO add command cases for Climber
-			case COMMAND_CLIMBER_TRUE:
-
+			case COMMAND_CLIMBER_UP:
 				pClimberMotor1->Set(localMessage.params.climber.ClimbUp);
-				pClimberMotor2->Set(-localMessage.params.climber.ClimbUp);
+				pClimberMotor2->Set(localMessage.params.climber.ClimbUp*-1);
 				break;
 
-			/*case COMMAND_CLIMBER_DOWN:
+			case COMMAND_CLIMBER_DOWN:
 				pClimberMotor1->Set(localMessage.params.climber.ClimbDown);
 				pClimberMotor2->Set(localMessage.params.climber.ClimbDown*-1);
-				break;*/
+				break;
 
 			case COMMAND_CLIMBER_STOP:
 				pClimberMotor1->Set(0);
