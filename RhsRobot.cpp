@@ -69,7 +69,7 @@ void RhsRobot::Init() {
 	pDrivetrain = new Drivetrain();
 //	pClimber = new Climber();
 	pHopper = new Hopper();
-//	pGearIntake = new GearIntake();
+	pGearIntake = new GearIntake();
 	pAutonomous = new Autonomous();
 
 	std::vector<ComponentBase *>::iterator nextComponent = ComponentSet.begin();
@@ -204,12 +204,14 @@ void RhsRobot::Run() {
 		else if (GEAR_INTAKE_RELEASE)
 		{
 			robotMessage.command = COMMAND_GEARINTAKE_RELEASE;
-			robotMessage.params.gear.GearRelease = -.2;
+			robotMessage.params.gear.GearRelease = 0.5;
 			pGearIntake->SendMessage(&robotMessage);
 		}
 		else
 		{
-			robotMessage.command = COMMAND_GEARINTAKE_STOP;
+			robotMessage.command = COMMAND_GEARINTAKE_HOLD;
+			//robotMessage.command = COMMAND_GEARINTAKE_STOP;
+			robotMessage.params.gear.GearHold = 0.10;
 			pGearIntake->SendMessage(&robotMessage);
 		}
 	}

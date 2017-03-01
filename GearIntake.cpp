@@ -68,11 +68,11 @@ void GearIntake::Run()
 	switch(localMessage.command)			//Reads the message command
 	{
 		case COMMAND_GEARINTAKE_RELEASE:
-						pGearIntakeMotor->Set(localMessage.params.gear.GearRelease*-1);
+						pGearIntakeMotor->Set(localMessage.params.gear.GearRelease);
 						break;
 
 		case COMMAND_GEARINTAKE_HOLD:
-						pGearIntakeMotor->Set(localMessage.params.gear.GearHold*-1);
+						pGearIntakeMotor->Set(-localMessage.params.gear.GearHold);
 						break;
 
 	    case COMMAND_GEARINTAKE_STOP:
