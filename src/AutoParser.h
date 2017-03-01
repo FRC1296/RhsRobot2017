@@ -21,6 +21,10 @@ typedef enum AUTO_COMMAND_TOKENS
 	AUTO_TOKEN_BEGIN,				//!<	mark beginning of mode block
 	AUTO_TOKEN_END,					//!<	mark end of mode block
 	AUTO_TOKEN_DELAY,				//!<	delay (seconds - float)
+	AUTO_TOKEN_MMOVE,				//!<	moves a specific distance (measured in inches)
+	AUTO_TOKEN_ROTATE,				//!<	rotates the robot a specific angle
+	AUTO_TOKEN_GEARRELEASE,			//!<	opens the gear holder to drop the gear on the spring
+	AUTO_TOKEN_GEARHOLD,			//!<	closes the gear holder to prepare for another
 	AUTO_TOKEN_LAST
 } AUTO_COMMAND_TOKENS;
 

@@ -28,6 +28,10 @@ const char *szTokens[] = {
 		"BEGIN",
 		"END",
 		"DELAY",			//!<(seconds)
+		"MMOVE",
+		"ROTATE",
+		"GEARRELEASE",
+		"GEARHOLD",
 		"NOP" };
 //TODO: add START and FINISH, which send messages to all components
 // (Begin and End are doing this now, but they shouldn't)
@@ -144,6 +148,46 @@ bool Autonomous::Evaluate(std::string rStatement) {
 
 			Delay(fParam1);
 		}
+		break;
+
+	case AUTO_TOKEN_MMOVE:
+		pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
+
+		if (pToken == NULL)
+		{
+			rStatus.append("missing parameter");
+		}
+		else
+		{
+			fParam1 = atof(pToken);
+			rStatus.append("measuredMove");
+			MeasuredMove(fParam1);
+		}
+		break;
+
+	case AUTO_TOKEN_ROTATE:
+		pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
+
+		if (pToken == NULL)
+		{
+			rStatus.append("missing parameter");
+		}
+		else
+		{
+			fParam1 = atof(pToken);
+			rStatus.append("Rotate");
+			Rotate(fParam1);
+		}
+		break;
+
+	case AUTO_TOKEN_GEARRELEASE:
+		GearRelease();
+		rStatus.append("Gear Release");
+		break;
+
+	case AUTO_TOKEN_GEARHOLD:
+		GearHold();
+		rStatus.append("Gear Hold");
 		break;
 
 	default:

@@ -34,7 +34,7 @@ public:
 	}
 
 private:
-	CANTalon* pGearIntakeMotor1;
+	CANTalon* pGearIntakeMotor;
 
 	void OnStateChange();
 	void Run();

@@ -58,6 +58,10 @@ enum MessageCommand {
 
 	COMMAND_AUTONOMOUS_RUN,				//!< Tells Autonomous to run
 	COMMAND_AUTONOMOUS_COMPLETE,		//!< Tells all components that Autonomous is done running the script
+	COMMAND_AUTONOMOUS_MEASURED_MOVE,	//!< Tells the robot to move a specific distance (measured in inches)
+	COMMAND_AUTONOMOUS_ROTATE,			//!< Rotates the robot x amount of degrees
+	COMMAND_AUTONOMOUS_GEARRELEASE,		//!< Opens the gear funnel on the robot
+	COMMAND_AUTONOMOUS_GEARHOLD,		//!< Closes the gear funnel on the robot
 	COMMAND_AUTONOMOUS_RESPONSE_OK,		//!< Tells Autonomous that a command finished running successfully
 	COMMAND_AUTONOMOUS_RESPONSE_ERROR,	//!< Tells Autonomous that a command had a error while running
 	COMMAND_CHECKLIST_RUN,				//!< Tells CheckList to run
@@ -96,6 +100,21 @@ struct CheezyDriveParams {
 	bool bQuickturn;
 };
 
+struct ClimberParams {
+	float ClimbUp;
+	float ClimbDown;
+};
+
+struct HopperParams {
+	float HopUp;
+	float HopDown;
+};
+
+struct GearIntakeParams {
+	float GearHold;
+	float GearRelease;
+};
+
 struct SystemParams {
 	float fBattery;
 };
@@ -117,30 +136,15 @@ struct AutonomousParams {
 	float driveTime;
 };
 
-struct ClimberParams {
-	float ClimbUp;
-	float ClimbDown;
-};
-
-struct HopperParams {
-	float HopUp;
-	float HopDown;
-};
-
-struct GearIntakeParams {
-	float GearHold;
-	float GearRelease;
-};
-
 ///Contains all the parameter structures contained in a message
 union MessageParams {
 	TankDriveParams tankDrive;
 	CheezyDriveParams cheezyDrive;
 	AutonomousParams autonomous;
-	SystemParams system;
 	ClimberParams climber;
 	HopperParams hopper;
 	GearIntakeParams gear;
+	SystemParams system;
 };
 
 ///A structure containing a command, a set of parameters, and a reply id, sent between components

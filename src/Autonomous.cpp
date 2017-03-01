@@ -158,6 +158,31 @@ bool Autonomous::Finish()
 	return(false);
 }
 
+bool Autonomous::MeasuredMove(int inches)
+{
+	//TODO write Autonomous::MeasuredMove()
+	Message.command = COMMAND_AUTONOMOUS_MEASURED_MOVE;
+	return (CommandResponse(DRIVETRAIN_QUEUE));
+}
+
+bool Autonomous::Rotate(int degrees)
+{
+	Message.command = COMMAND_AUTONOMOUS_ROTATE;
+	return (CommandResponse(DRIVETRAIN_QUEUE));
+}
+
+bool Autonomous::GearRelease()
+{
+	Message.command = COMMAND_AUTONOMOUS_GEARRELEASE;
+	return (CommandNoResponse(DRIVETRAIN_QUEUE));
+}
+
+bool Autonomous::GearHold()
+{
+	Message.command = COMMAND_AUTONOMOUS_GEARHOLD;
+	return (CommandNoResponse(DRIVETRAIN_QUEUE));
+}
+
 bool Autonomous::Begin(char *pCurrLinePos)
 {
 	//tell all the components who may need to know that auto is beginning

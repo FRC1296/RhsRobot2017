@@ -64,13 +64,8 @@ const char* const GEARINTAKE_QUEUE	= "/tmp/qGearIntake";
 //PWM Channels - Assigns names to PWM ports 1-10 on the Roborio
 //EXAMPLE: const int PWM_DRIVETRAIN_FRONT_LEFT_MOTOR = 1;
 
-const int PWM_DRIVETRAIN_LEFT_MOTOR1  = 1;
-const int PWM_DRIVETRAIN_LEFT_MOTOR2  = 1;
-const int PWM_DRIVETRAIN_RIGHT_MOTOR1 = 0;
-const int PWM_DRIVETRAIN_RIGHT_MOTOR2 = 0;
-const int PWM_HOPPER_MOTOR            = 1;
-const int PWM_CLIMBER_MOTOR           = 1;
-const int PWM_CLIMBER_MOTOR_SLAVE     = 1;
+const int PWM_DRIVETRAIN_LEFT_MOTOR = 1;
+const int PWM_DRIVETRAIN_RIGHT_MOTOR = 0;
 
 //CAN IDs - Assigns names to the various CAN IDs
 //EXAMPLE: const int CAN_PDB = 0;
@@ -90,9 +85,8 @@ const int CAN_DRIVETRAIN_RIGHT_MOTOR = 3;
 const int CAN_DRIVETRAIN_RIGHT_MOTOR_SLAVE = 4;
 const int CAN_CLIMBER_MOTOR = 5;
 const int CAN_CLIMBER_MOTOR_SLAVE = 6;
-const int CAN_GEARINTAKE_MOTOR1 = 7;
-const int CAN_GEARINTAKE_MOTOR2 = 8;
-const int CAN_HOPPER_MOTOR = 9;
+const int CAN_HOPPER_MOTOR = 7;
+const int CAN_GEARINTAKE_MOTOR = 8;
 
 //Relay Channels - Assigns names to Relay ports 1-8 on the Roborio
 //EXAMPLE: const int RLY_COMPRESSOR = 1;
@@ -177,17 +171,16 @@ const int POV_STILL = -1;
 #define CHEEZY_DRIVE_WHEEL			(pController_1->GetRawAxis(L310_THUMBSTICK_RIGHT_X))
 #define CHEEZY_DRIVE_THROTTLE		(-pController_1->GetRawAxis(L310_THUMBSTICK_LEFT_Y))
 #define CHEEZY_DRIVE_SPIN		    (-pController_1->GetRawAxis(L310_TRIGGER_LEFT) + Controller_1->GetRawAxis(L310_TRIGGER_RIGHT))
+#define CHEEZY_DRIVE_QUICKTURN		(pController_1->GetRawButton(L310_BUTTON_BUMPER_LEFT))
 
-#define TANK_DRIVE_STOP		         (pController_1->GetRawButton(L310_BUTTON_BUMPER_LEFT))
-
-#define HOPPER_UP					(pController_1->GetRawButton(L310_BUTTON_A)) // Unused
-#define HOPPER_DOWN					(pController_1->GetRawButton(L310_BUTTON_B)) // Unused
+#define HOPPER_UP					(pController_1->GetRawButton(L310_BUTTON_A))
+#define HOPPER_DOWN					(pController_1->GetRawButton(L310_BUTTON_B))
 
 #define CLIMBER_UP					(pController_1->GetRawButton(L310_BUTTON_BUMPER_LEFT))
 #define CLIMBER_DOWN				(pController_1->GetRawButton(L310_BUTTON_BUMPER_RIGHT))
 
-#define GEAR_INTAKE_HOLD			(pController_1->GetRawButton(L310_BUTTON_A))
-#define GEAR_INTAKE_RELEASE			(pController_1->GetRawButton(L310_BUTTON_B))
+#define GEAR_INTAKE_HOLD			(pController_1->GetRawButton(L310_BUTTON_X))
+#define GEAR_INTAKE_RELEASE			(pController_1->GetRawButton(L310_BUTTON_Y))
 
 #endif // USE_L310_FOR_CONTROLLER_1
 

@@ -7,14 +7,14 @@
 #ifndef RHS_ROBOT_H
 #define RHS_ROBOT_H
 
-#include <WPILib.h>
-
 #include "Autonomous.h"
 #include "Drivetrain.h"
-#include "RhsRobotBase.h"
-// #include "Hopper.h"
+#include "Hopper.h"
 #include "Climber.h"
 #include "GearIntake.h"
+
+#include <RhsRobotBase.h>
+#include "WPILib.h"
 
 class RhsRobot : public RhsRobotBase
 {
@@ -28,18 +28,18 @@ private:
 	Drivetrain* pDrivetrain;
 	Autonomous* pAutonomous;
 	Climber* pClimber;
-//	Hopper* pHopper;
+	Hopper* pHopper;
 	GearIntake* pGearIntake;
+
+	cs::UsbCamera camera;
 
 	std::vector <ComponentBase *> ComponentSet;
 	
 	void Init();
 	void OnStateChange();
 	void Run();
-	bool CheckButtonPressed(bool, bool);
-	bool CheckButtonReleased(bool, bool);
 
-
+	bool bHopperRunning;
 	int iLoop;
 };
 

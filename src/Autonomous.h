@@ -62,6 +62,10 @@ private:
 	void Delay(float);
 	bool Start();
 	bool Finish();
+	bool MeasuredMove(int);
+	bool Rotate(int);
+	bool GearRelease(void);
+	bool GearHold(void);
 	bool Begin(char *);
 	bool End(char *);
 
