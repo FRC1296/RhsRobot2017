@@ -22,8 +22,9 @@ typedef enum AUTO_COMMAND_TOKENS
 	AUTO_TOKEN_MOVE,				//!<N	move (left & right PWM - float)
 	AUTO_TOKEN_MMOVE,				//!<R	mmove <speed> (inches - float)
 	AUTO_TOKEN_MPROXIMITY,	        //!<R	mprox <speed> (inches - float)
-	AUTO_TOKEN_TMOVE,			    //!<R	straight drive (speed) (duration)
 	AUTO_TOKEN_TURN,				//!<R	turn <degrees - float> (timeout)
+	AUTO_TOKEN_GEAR_RELEASE, 		//!<    opens gear handler
+	AUTO_TOKEN_GEAR_HOLD,			//!< 	closes gear handler
 	AUTO_TOKEN_LAST
 } AUTO_COMMAND_TOKENS;
 

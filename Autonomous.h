@@ -67,6 +67,8 @@ private:
 	bool MeasuredMoveProximity(char *);
 	bool TimedMove(char *);
 	bool Turn(char *);
+	bool GearRelease(void);
+	bool GearHold(void);
 
 	bool CommandResponse(const char *szQueueName);
 	bool CommandNoResponse(const char *szQueueName);

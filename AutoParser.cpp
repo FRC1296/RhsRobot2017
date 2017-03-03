@@ -29,8 +29,9 @@ const char *szTokens[] = {
 		"MOVE",				//!<(left speed) (right speed)
 		"MOVE_MEASURED",	//!<(speed) (distance:inches) (timeout)
 		"MOVE_PROXIMITY",	//!<(speed) (distance:inches) (timeout)
-		"MOVE_TIMED",		//!<(speed) (duration)
 		"TURN",				//!<(degrees) (timeout)
+		"GEAR_RELEASE",
+		"GEAR_HOLD",
 		"NOP" };
 
 bool Autonomous::Evaluate(std::string rStatement) {
@@ -170,17 +171,6 @@ bool Autonomous::Evaluate(std::string rStatement) {
 		}
 		break;
 
-	case AUTO_TOKEN_TMOVE:
-		if (!TimedMove(pCurrLinePos))
-		{
-			rStatus.append("straight error");
-		}
-		else
-		{
-			rStatus.append("straight");
-		}
-		break;
-
 	case AUTO_TOKEN_TURN:
 		if (!Turn(pCurrLinePos))
 		{
@@ -191,6 +181,16 @@ bool Autonomous::Evaluate(std::string rStatement) {
 			rStatus.append("turn");
 		}
 		break;
+
+	case AUTO_TOKEN_GEAR_RELEASE:
+		GearRelease();
+		rStatus.append("gear release");
+		break;
+
+	case AUTO_TOKEN_GEAR_HOLD:
+		GearHold();
+		rStatus.append("gear hold");
+  	   break;
 
 	default:
 		rStatus.append("unknown token");

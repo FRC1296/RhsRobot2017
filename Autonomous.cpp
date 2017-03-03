@@ -327,3 +327,21 @@ bool Autonomous::Turn(char *pCurrLinePos) {
 	Message.params.turn.fTimeout = fTimeout;
 	return (CommandResponse(DRIVETRAIN_QUEUE));
 }
+
+bool Autonomous::GearRelease()
+{
+	// move measure distance forward/backward
+
+	Message.command = COMMAND_GEARINTAKE_RELEASE;
+	CommandNoResponse(DRIVETRAIN_QUEUE);
+	return (true);
+}
+
+bool Autonomous::GearHold()
+{
+	// move measure distance forward/backward
+
+	Message.command = COMMAND_GEARINTAKE_HOLD;
+	CommandNoResponse(DRIVETRAIN_QUEUE);
+	return (true);
+}

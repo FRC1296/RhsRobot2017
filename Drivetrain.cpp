@@ -221,9 +221,6 @@ void Drivetrain::Run() {
 	 		IterateStraightDrive();
 			break;
 
-		case COMMAND_DRIVETRAIN_AUTO_TMOVE:
-			break;
-
 		case COMMAND_DRIVETRAIN_TURN:
 			bDrivingStraight = false;
 			bTurning = true;
