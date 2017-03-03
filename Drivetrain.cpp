@@ -76,12 +76,37 @@ Drivetrain::Drivetrain() :
 	wpi_assert(pRightMotor->IsAlive());
 	wpi_assert(pLeftMotorSlave->IsAlive());
 	wpi_assert(pRightMotorSlave->IsAlive());
-	bUnderServoControl = false;
 
-	pCheezy = new CheesyLoop();
+	pUltrasonic = new Ultrasonic(DIO_ULTRASONIC_INPUT, DIO_ULTRASONIC_OUTPUT);
+	pUltrasonic->SetAutomaticMode(true);
+
+	bUnderServoControl = false;
+	bDrivingStraight = false;
+	bTurning = false;
+	bMeasuredMove = false;
+	bMeasuredMoveProximity = false;
+	bInAuto = false;
+
+	fStraightDriveDistance = 0.0;
+
+	pAutoTimer = new Timer();
+	wpi_assert(pAutoTimer);
+	pAutoTimer->Start();
+
+	pRunTimer = new Timer();
+	wpi_assert(pRunTimer);
+	pRunTimer->Start();
 
 	pGyro = new ADXRS453Z();
 	wpi_assert(pGyro);
+
+	fStraightDriveDistance = 0.0;
+	fStraightDriveTime = 0.0;
+	fStraightDriveSpeed = 0.0;
+	fTurnAngle = 0.0;
+	fTurnTime = 0.0;
+
+	pCheezy = new CheesyLoop();
 
 	pTask = new std::thread(&Drivetrain::StartTask, this,
 			DRIVETRAIN_TASKNAME, DRIVETRAIN_PRIORITY);
@@ -106,6 +131,7 @@ void Drivetrain::OnStateChange()
 	{
 		case COMMAND_ROBOT_STATE_AUTONOMOUS:
 			bUnderServoControl = true;
+			bInAuto = true;
 			pLeftMotor->SetControlMode(CANTalon::kSpeed);
 			pRightMotor->SetControlMode(CANTalon::kSpeed);
 			pLeftMotor->Set(0.0);
@@ -119,6 +145,7 @@ void Drivetrain::OnStateChange()
 		case COMMAND_ROBOT_STATE_UNKNOWN:
 		default:
 			bUnderServoControl = false;
+			bInAuto = false;
 			pLeftMotor->SetControlMode(CANTalon::kPercentVbus);
 			pRightMotor->SetControlMode(CANTalon::kPercentVbus);
 			pLeftMotor->Set(0.0);
@@ -150,12 +177,82 @@ void Drivetrain::Run() {
 			fBatteryVoltage = localMessage.params.system.fBattery;
 			break;
 
+		case COMMAND_DRIVETRAIN_AUTO_MOVE:
+			bDrivingStraight = false;
+			bTurning = false;
+
+			if(bUnderServoControl)
+			{
+				pLeftMotor->Set(localMessage.params.move.fLeft * FULLSPEED_FROMTALONS);
+				pRightMotor->Set(localMessage.params.move.fRight * FULLSPEED_FROMTALONS);
+			}
+			else
+			{
+				pLeftMotor->Set(localMessage.params.move.fLeft);
+				pRightMotor->Set(localMessage.params.move.fRight);
+			}
+			break;
+
+		case COMMAND_DRIVETRAIN_AUTO_MMOVE:
+			bMeasuredMove = true;
+			bMeasuredMoveProximity = false;
+			bDrivingStraight = true;
+			bTurning = false;
+
+			StartStraightDrive(localMessage.params.mmove.fSpeed,
+	 				15.0, localMessage.params.mmove.fDistance);
+
+	 		// feed cheezy filters but do not activate motors
+	 		RunCheezyDrive(false, 0.0, localMessage.params.mmove.fSpeed, false);
+	 		IterateStraightDrive();
+			break;
+
+		case COMMAND_DRIVETRAIN_AUTO_PMOVE:
+			bMeasuredMove = false;
+			bMeasuredMoveProximity = true;
+			bDrivingStraight = true;
+			bTurning = false;
+
+			StartStraightDrive(localMessage.params.mmove.fSpeed,
+	 				15.0, localMessage.params.mmove.fDistance);
+
+	 		// feed cheezy filters but do not activate motors
+	 		RunCheezyDrive(false, 0.0, localMessage.params.mmove.fSpeed, false);
+	 		IterateStraightDrive();
+			break;
+
+		case COMMAND_DRIVETRAIN_AUTO_TMOVE:
+			break;
+
+		case COMMAND_DRIVETRAIN_TURN:
+			bDrivingStraight = false;
+			bTurning = true;
+			StartTurn(localMessage.params.turn.fAngle, localMessage.params.turn.fTimeout);
+
+			// contribute to cheezy Kalman filter
+
+			if(localMessage.params.turn.fAngle > 0.0)
+			{
+				RunCheezyDrive(false, 0.5, 0.0, false);
+			}
+			else
+			{
+				RunCheezyDrive(false, -0.5, 0.0, false);
+			}
+			break;
+
 		case COMMAND_SYSTEM_MSGTIMEOUT:  // what should we do if we do not get a timely message?
 			break;
 
 		default:
 			break;
 	}
+
+	SmartDashboard::PutNumber("Battery", fBatteryVoltage);
+	SmartDashboard::PutNumber("angle", pGyro->GetAngle() * 3.141519 / 180.0);
+	SmartDashboard::PutNumber("left encoder", -pLeftMotor->GetEncPosition() * METERS_PER_COUNT);
+	SmartDashboard::PutNumber("right encoder", pRightMotor->GetEncPosition() * METERS_PER_COUNT);
+	SmartDashboard::PutNumber("ultrasonic", pUltrasonic->GetRangeInches() / 12);
 }
 
 void Drivetrain::RunCheezyDrive(bool bEnabled, float fWheel, float fThrottle, bool bQuickturn)
@@ -190,12 +287,6 @@ void Drivetrain::RunCheezyDrive(bool bEnabled, float fWheel, float fThrottle, bo
     Position.battery_voltage = fBatteryVoltage;
     Position.left_shifter_position = true;
     Position.right_shifter_position = false;
-
-	SmartDashboard::PutNumber("Battery", fBatteryVoltage);
-	SmartDashboard::PutNumber("angle rate", Position.gyro_velocity);
-	SmartDashboard::PutNumber("angle", Position.gyro_angle);
-	SmartDashboard::PutNumber("left encoder", Position.left_encoder);
-	SmartDashboard::PutNumber("right encoder", Position.right_encoder);
 
     if(bEnabled)
     {

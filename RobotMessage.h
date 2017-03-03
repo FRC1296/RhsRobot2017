@@ -65,6 +65,11 @@ enum MessageCommand {
 	COMMAND_DRIVETRAIN_STOP,			//!< Tells Drivetrain to stop moving
 	COMMAND_DRIVETRAIN_DRIVE_TANK,		//!< Tells Drivetrain to use tank drive
 	COMMAND_DRIVETRAIN_DRIVE_CHEEZY,    //!< Tells Drivetrain to use cheesy drive
+	COMMAND_DRIVETRAIN_AUTO_MOVE,    	//!< Tells Drivetrain to start moving
+	COMMAND_DRIVETRAIN_AUTO_MMOVE,    	//!< Tells Drivetrain to move a measured distance
+	COMMAND_DRIVETRAIN_AUTO_PMOVE,    	//!< Tells Drivetrain to move into proximity of barrier
+	COMMAND_DRIVETRAIN_AUTO_TMOVE,    	//!< Tells Drivetrain to move for an amount of time
+	COMMAND_DRIVETRAIN_TURN,
 
 	COMMAND_HOPPER_UP,
 	COMMAND_HOPPER_DOWN,
@@ -83,6 +88,32 @@ enum MessageCommand {
 	COMMAND_COMPONENT_TEST,				//!< COMMAND_COMPONENT_TEST
 	COMMAND_LAST                        //!< COMMAND_LAST
 };
+
+struct MoveParams {
+	float fLeft;
+	float fRight;
+};
+
+struct MeasuredMoveParams {
+	float fSpeed;
+	float fDistance;
+};
+
+struct ProximityMoveParams {
+	float fSpeed;
+	float fDistance;
+};
+
+struct TimedMoveParams {
+	float fSpeed;
+	float fTime;
+};
+
+struct TurnParams {
+	float fAngle;
+	float fTimeout;
+};
+
 ///Used to deliver joystick readings to Drivetrain
 struct TankDriveParams {
 	float left;
@@ -136,7 +167,11 @@ struct AutonomousParams {
 union MessageParams {
 	TankDriveParams tankDrive;
 	CheezyDriveParams cheezyDrive;
-	AutonomousParams autonomous;
+	MoveParams move;
+	MeasuredMoveParams mmove;
+	ProximityMoveParams pmove;
+	TimedMoveParams tmove;
+	TurnParams turn;
 	ClimberParams climber;
 	HopperParams hopper;
 	GearIntakeParams gear;

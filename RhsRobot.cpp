@@ -159,7 +159,7 @@ void RhsRobot::Run() {
 			if(bHopperRunning)
 			{
 				robotMessage.command = COMMAND_HOPPER_UP;
-				robotMessage.params.hopper.HopUp = 1.0;
+				robotMessage.params.hopper.HopUp = 0.75;
 				pHopper->SendMessage(&robotMessage);
 			}
 			else

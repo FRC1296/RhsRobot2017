@@ -59,11 +59,14 @@ private:
 	MessageCommand ReceivedCommand;
 	Timer *pDebugTimer;
 
-	void Delay(float);
-	bool Start();
-	bool Finish();
 	bool Begin(char *);
 	bool End(char *);
+	void Delay(float);
+	bool Move(char *);
+	bool MeasuredMove(char *);
+	bool MeasuredMoveProximity(char *);
+	bool TimedMove(char *);
+	bool Turn(char *);
 
 	bool CommandResponse(const char *szQueueName);
 	bool CommandNoResponse(const char *szQueueName);

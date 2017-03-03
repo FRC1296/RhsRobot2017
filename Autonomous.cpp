@@ -146,18 +146,6 @@ void Autonomous::Delay(float delayTime)
 	}
 }
 
-bool Autonomous::Start()
-{
-	//TODO write Autonomous::Start()
-	return(false);
-}
-
-bool Autonomous::Finish()
-{
-	//TODO write Autonomous::Finish()
-	return(false);
-}
-
 bool Autonomous::Begin(char *pCurrLinePos)
 {
 	//tell all the components who may need to know that auto is beginning
@@ -173,4 +161,169 @@ bool Autonomous::End(char *pCurrLinePos)
 	return (true);
 }
 
+bool Autonomous::Move(char *pCurrLinePos) {
+	char *pToken;
+	float fLeft;
+	float fRight;
 
+	// parse remainder of line to get length to move
+
+	pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
+	fLeft = atof(pToken);
+
+	pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
+	fRight = atof(pToken);
+
+	if ((fabs(fLeft) > MAX_VELOCITY_PARAM)
+			|| (fabs(fRight) > MAX_VELOCITY_PARAM))
+	{
+		return (false);
+	}
+	Message.command = COMMAND_DRIVETRAIN_AUTO_MOVE;
+	Message.params.tankDrive.left = fLeft;
+	Message.params.tankDrive.right = fRight;
+
+	return (CommandNoResponse(DRIVETRAIN_QUEUE));
+}
+
+bool Autonomous::MeasuredMove(char *pCurrLinePos) {
+
+	char *pToken;
+	float fDistance;
+	float fSpeed;
+
+	// parse remainder of line to get length to move
+
+	pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
+
+	if(pToken == NULL)
+	{
+		SmartDashboard::PutString("Auto Status","EARLY DEATH!");
+		return (false);
+	}
+
+	fSpeed = atof(pToken);
+
+	pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
+
+	if(pToken == NULL)
+	{
+		SmartDashboard::PutString("Auto Status","EARLY DEATH!");
+		return (false);
+	}
+
+	fDistance = atof(pToken);
+
+	// send the message to the drive train
+
+	Message.command = COMMAND_DRIVETRAIN_AUTO_MMOVE;
+	Message.params.mmove.fSpeed = fSpeed;
+	Message.params.mmove.fDistance = fDistance;
+
+	return (CommandResponse(DRIVETRAIN_QUEUE));
+}
+
+bool Autonomous::MeasuredMoveProximity(char *pCurrLinePos) {
+
+	char *pToken;
+	float fDistance;
+	float fSpeed;
+
+	// parse remainder of line to get length to move
+
+	pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
+
+	if(pToken == NULL)
+	{
+		SmartDashboard::PutString("Auto Status","EARLY DEATH!");
+		return (false);
+	}
+
+	fSpeed = atof(pToken);
+
+	pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
+
+	if(pToken == NULL)
+	{
+		SmartDashboard::PutString("Auto Status","EARLY DEATH!");
+		return (false);
+	}
+
+	fDistance = atof(pToken);
+
+	// send the message to the drive train
+
+	Message.command = COMMAND_DRIVETRAIN_AUTO_PMOVE;
+	Message.params.pmove.fSpeed = fSpeed;
+	Message.params.pmove.fDistance = fDistance;
+
+	return (CommandResponse(DRIVETRAIN_QUEUE));
+}
+
+bool Autonomous::TimedMove(char *pCurrLinePos) {
+	char *pToken;
+	float fSpeed;
+	float fTime;
+
+	// parse remainder of line to get length to move
+
+	pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
+
+	if(pToken == NULL)
+	{
+		SmartDashboard::PutString("Auto Status","DEATH BY PARAMS!");
+		PRINTAUTOERROR;
+		return (false);
+	}
+
+	fSpeed = atof(pToken);
+	pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
+
+	if(pToken == NULL)
+	{
+		SmartDashboard::PutString("Auto Status","DEATH BY PARAMS!");
+		PRINTAUTOERROR;
+		return (false);
+	}
+
+	fTime = atof(pToken);
+
+	// send the message to the drive train
+	Message.command = COMMAND_DRIVETRAIN_AUTO_TMOVE;
+	Message.params.tmove.fSpeed = fSpeed;
+	Message.params.tmove.fTime = fTime;
+	return (CommandNoResponse(DRIVETRAIN_QUEUE));
+}
+
+bool Autonomous::Turn(char *pCurrLinePos) {
+	char *pToken;
+	float fAngle;
+	float fTimeout;
+
+	// parse remainder of line to get target angle and timeout
+	pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
+
+	if(pToken == NULL)
+	{
+		SmartDashboard::PutString("Auto Status","DEATH BY PARAMS!");
+		return (false);
+	}
+
+	fAngle = atof(pToken);
+
+	pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
+
+	if(pToken == NULL)
+	{
+		SmartDashboard::PutString("Auto Status","DEATH BY PARAMS!");
+		return (false);
+	}
+
+	fTimeout = atof(pToken);
+
+	// send the message to the drive train
+	Message.command = COMMAND_DRIVETRAIN_TURN;
+	Message.params.turn.fAngle= fAngle;
+	Message.params.turn.fTimeout = fTimeout;
+	return (CommandResponse(DRIVETRAIN_QUEUE));
+}

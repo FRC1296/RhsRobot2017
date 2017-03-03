@@ -20,17 +20,18 @@
 using namespace std;
 
 const char *szTokens[] = {
-		"START",
-		"FINISH",
 		"MODE",
 		"DEBUG",
 		"MESSAGE",
 		"BEGIN",
 		"END",
 		"DELAY",			//!<(seconds)
+		"MOVE",				//!<(left speed) (right speed)
+		"MOVE_MEASURED",	//!<(speed) (distance:inches) (timeout)
+		"MOVE_PROXIMITY",	//!<(speed) (distance:inches) (timeout)
+		"MOVE_TIMED",		//!<(speed) (duration)
+		"TURN",				//!<(degrees) (timeout)
 		"NOP" };
-//TODO: add START and FINISH, which send messages to all components
-// (Begin and End are doing this now, but they shouldn't)
 
 bool Autonomous::Evaluate(std::string rStatement) {
 	char *pToken;
@@ -100,16 +101,6 @@ bool Autonomous::Evaluate(std::string rStatement) {
 	switch (iCommand)
 	{
 
-	case AUTO_TOKEN_START_AUTO:
-		Start();
-		rStatus.append("starting auto");
-		break;
-
-	case AUTO_TOKEN_FINISH_AUTO:
-		Finish();
-		rStatus.append("finishing auto");
-		break;
-
 	case AUTO_TOKEN_BEGIN:
 		Begin(pCurrLinePos);
 		rStatus.append("begin");
@@ -143,6 +134,61 @@ bool Autonomous::Evaluate(std::string rStatement) {
 			rStatus.append("wait");
 
 			Delay(fParam1);
+		}
+		break;
+
+	case AUTO_TOKEN_MOVE:
+		if (!Move(pCurrLinePos))
+		{
+			rStatus.append("move error");
+		}
+		else
+		{
+			rStatus.append("move");
+		}
+		break;
+
+	case AUTO_TOKEN_MMOVE:
+		if (!MeasuredMove(pCurrLinePos))
+		{
+			rStatus.append("move error");
+		}
+		else
+		{
+			rStatus.append("move");
+		}
+		break;
+
+	case AUTO_TOKEN_MPROXIMITY:
+		if (!MeasuredMoveProximity(pCurrLinePos))
+		{
+			rStatus.append("move line error");
+		}
+		else
+		{
+			rStatus.append("move line");
+		}
+		break;
+
+	case AUTO_TOKEN_TMOVE:
+		if (!TimedMove(pCurrLinePos))
+		{
+			rStatus.append("straight error");
+		}
+		else
+		{
+			rStatus.append("straight");
+		}
+		break;
+
+	case AUTO_TOKEN_TURN:
+		if (!Turn(pCurrLinePos))
+		{
+			rStatus.append("turn error");
+		}
+		else
+		{
+			rStatus.append("turn");
 		}
 		break;
 

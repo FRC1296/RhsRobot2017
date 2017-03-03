@@ -37,6 +37,8 @@ const float TALON_COUNTSPERREV =	360;	// from CTRE docs
 const float REVSPERFOOT = (3.141519 * 6.0 / 12.0);
 const double METERS_PER_COUNT = (REVSPERFOOT * 0.3048 / (double)TALON_COUNTSPERREV);
 
+const float fMinimumTurnSpeed = 0.3;
+const float fMaxUltrasonicDistance = (25)/(REVSPERFOOT/TALON_COUNTSPERREV)*4;  //25 feet
 
 class CheesyLoop;
 
@@ -58,15 +60,34 @@ private:
 	void OnStateChange();
 	void Run();
 	void RunCheezyDrive(bool, float, float, bool);
+	void StartStraightDrive (float, float, float);
+	void IterateStraightDrive(void);
+	void StraightDriveLoop(float);
+	void StartTurn(float, float);
+	void IterateTurn(void);
 
 	CANTalon* pLeftMotor;
 	CANTalon* pRightMotor;
 	CANTalon* pLeftMotorSlave;
 	CANTalon* pRightMotorSlave;
+	Timer *pAutoTimer;
+	Timer* pRunTimer;
+	Ultrasonic *pUltrasonic;
 
 	ADXRS453Z *pGyro;
 	float fBatteryVoltage;
+	float fStraightDriveSpeed;
+	float fStraightDriveTime;
+	float fStraightDriveDistance;
+	float fTurnAngle;
+	float fTurnTime;
 	bool bUnderServoControl;
+	bool bMeasuredMove;
+	bool bMeasuredMoveProximity;
+	bool bDrivingStraight;
+	bool bTurning;
+	bool bInAuto;
+
 	CheesyLoop *pCheezy;
 };
 
