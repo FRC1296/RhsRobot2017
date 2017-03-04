@@ -60,10 +60,12 @@ void ADXRS453Z::Update() {
 	}
 	else if (calibration_timer->Get() < CALIBRATE_PERIOD)
 	{
+		thisTime = update_timer->Get();
 		Calibrate();
 	}
 	else
 	{
+		thisTime = update_timer->Get();
 		UpdateData();
 	}
 }
@@ -74,7 +76,6 @@ void ADXRS453Z::UpdateData() {
 
 	current_rate = rate;
 	current_rate -= rate_offset;
-	thisTime = update_timer->Get();
 
 	accumulated_offset += rate * (thisTime - lastTime);
 	accumulated_angle += current_rate * (thisTime - lastTime);
@@ -86,7 +87,6 @@ void ADXRS453Z::Calibrate() {
 	int sensor_data = assemble_sensor_data(data);
 	float rate = ((float) sensor_data) / 80.0;
 
-	thisTime = update_timer->Get();
 	accumulated_offset += rate * (thisTime - lastTime);
 	lastTime = thisTime;
 	rate_offset = accumulated_offset

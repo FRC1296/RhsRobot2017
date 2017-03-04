@@ -77,7 +77,7 @@ Drivetrain::Drivetrain() :
 	wpi_assert(pLeftMotorSlave->IsAlive());
 	wpi_assert(pRightMotorSlave->IsAlive());
 
-	pUltrasonic = new Ultrasonic(DIO_ULTRASONIC_INPUT, DIO_ULTRASONIC_OUTPUT);
+	pUltrasonic = new Ultrasonic(DIO_ULTRASONIC_OUTPUT, DIO_ULTRASONIC_INPUT);
 	pUltrasonic->SetAutomaticMode(true);
 
 	bUnderServoControl = false;
