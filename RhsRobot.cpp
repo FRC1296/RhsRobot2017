@@ -209,9 +209,9 @@ void RhsRobot::Run() {
 		}
 		else
 		{
-			robotMessage.command = COMMAND_GEARINTAKE_HOLD;
-			//robotMessage.command = COMMAND_GEARINTAKE_STOP;
-			robotMessage.params.gear.GearHold = 0.10;
+			//robotMessage.command = COMMAND_GEARINTAKE_HOLD;
+			robotMessage.command = COMMAND_GEARINTAKE_STOP;
+			//robotMessage.params.gear.GearHold = 0.10;
 			pGearIntake->SendMessage(&robotMessage);
 		}
 	}
