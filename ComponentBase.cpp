@@ -116,11 +116,14 @@ void ComponentBase::DoWork()
 void ComponentBase::SendCommandResponse(MessageCommand command)
 {
 	RobotMessage replyMessage;
-		replyMessage.command = command;
-		//Send a message back to auto to tell it that code is done.
-		int iPipeXmt = open(localMessage.replyQ, O_WRONLY);
-		assert(iPipeXmt > 0);
 
-		write(iPipeXmt, (char*) &replyMessage, sizeof(RobotMessage));
-		close(iPipeXmt);
+	replyMessage.command = command;
+
+	//Send a message back to auto to tell it that code is done.
+
+	int iPipeXmt = open(localMessage.replyQ, O_WRONLY);
+	assert(iPipeXmt > 0);
+
+	write(iPipeXmt, (char*) &replyMessage, sizeof(RobotMessage));
+	close(iPipeXmt);
 }

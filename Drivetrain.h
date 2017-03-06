@@ -22,23 +22,26 @@
 // measured 546 left and 534 right on the ground,
 // 641 left and 562 right on blocks on 21 March 2016
 
-const float FULLSPEED_FROMTALONS = 	1422.22;	// measured on the robot in RPMs
-const float TALON_FTERM_L = 		0.21;	// From CTRE manual, section 12.4
-const float TALON_PTERM_L = 		(TALON_FTERM_L / 5.0);
-const float TALON_ITERM_L = 		(TALON_PTERM_L / 10.0);
-const float TALON_DTERM_L = 		(TALON_PTERM_L / 5.0);
-const float TALON_FTERM_R = 		0.24;	// From CTRE manual, section 12.4
-const float TALON_PTERM_R = 		(TALON_FTERM_R / 5.0);
-const float TALON_ITERM_R = 		(TALON_PTERM_R / 10.0);
-const float TALON_DTERM_R = 		(TALON_PTERM_R / 5.0);
+const float FULLSPEED_FROMTALONS = 	300.0;	// measured on the robot in RPMs
+const float TALON_FTERM_L = 		1.364;	// From CTRE manual, section 12.4
+const float TALON_PTERM_L = 		(0.372);
+const float TALON_ITERM_L = 		(TALON_PTERM_L / 100.0);
+const float TALON_DTERM_L = 		(TALON_PTERM_L * 10.0);
+const float TALON_FTERM_R = 		1.364;	// From CTRE manual, section 12.4
+const float TALON_PTERM_R = 		(0.372);
+const float TALON_ITERM_R = 		(TALON_PTERM_L / 100.0);
+const float TALON_DTERM_R = 		(TALON_PTERM_L * 10.0);
 const float TALON_MAXRAMP =			60;		// 200ms
 const float TALON_IZONE	=			128;
-const float TALON_COUNTSPERREV =	360;	// from CTRE docs
-const float REVSPERFOOT = (3.141519 * 6.0 / 12.0);
+const float TALON_COUNTSPERREV =	512;	// from CTRE docs
+const float REVSPERFOOT = (3.14159 * 2.0 * 2.0 / 12.0);
 const double METERS_PER_COUNT = (REVSPERFOOT * 0.3048 / (double)TALON_COUNTSPERREV);
 
-const float fMinimumTurnSpeed = 0.3;
-const float fMaxUltrasonicDistance = (25)/(REVSPERFOOT/TALON_COUNTSPERREV)*4;  //25 feet
+const float fMinimumTurnSpeed = 0.25;
+const float fMaxUltrasonicDistance = (25.0/REVSPERFOOT*TALON_COUNTSPERREV);  //25 feet
+
+const int iIdealGearDistance = 10;    // 10" need to get this right (used for indicator on panel)
+const int iIdealGearDistanceError = 1;
 
 class CheesyLoop;
 
@@ -73,6 +76,9 @@ private:
 	Timer *pAutoTimer;
 	Timer* pRunTimer;
 	Ultrasonic *pUltrasonic;
+	Relay *pLed;
+	DigitalInput *pPixiImageDetect;
+	AnalogInput *pPixiImagePosition;
 
 	ADXRS453Z *pGyro;
 	float fBatteryVoltage;

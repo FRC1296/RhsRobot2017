@@ -20,11 +20,11 @@
 #include "WPILib.h"
 
 // define to use the encoder to open/close gear intake motor
-#define  USE_GEARINTAKE_ENCODER
+//#define  USE_GEARINTAKE_ENCODER
 
-const int releaseEncoderPos = 3246;
-const int holdEncoderPos = (releaseEncoderPos-2932-3246);
-const float kPGainGear = 0.15;
+const float kPGainGear = 0.10;
+const float kMaxCurrentGear = 20.0;
+const float kHoldGearConstant = -0.025;
 
 class GearIntake : public ComponentBase
 {
@@ -41,6 +41,8 @@ public:
 
 private:
 	CANTalon* pGearIntakeMotor;
+	int releaseEncoderPos = 7200;
+	int holdEncoderPos = 0;
 
 	void OnStateChange();
 	void Run();

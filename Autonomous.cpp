@@ -33,11 +33,10 @@ bool Autonomous::CommandResponse(const char *szQueueName) {
 	iPipeXmt = open(szQueueName, O_WRONLY);
 	wpi_assert(iPipeXmt > 0);
 
+	bReceivedCommandResponse = false;
 	Message.replyQ = AUTONOMOUS_QUEUE;
 	write(iPipeXmt, (char*) &Message, sizeof(RobotMessage));
 	close(iPipeXmt);
-
-	bReceivedCommandResponse = false;
 
 	while (!bReceivedCommandResponse)
 	{
@@ -79,6 +78,9 @@ bool Autonomous::MultiCommandResponse(vector<char*> szQueueNames, vector<Message
 	int iPipeXmt;
 	uResponseCount = 0;
 	//vector<int> iPipesXmt = new vector<int>();
+
+	bReceivedCommandResponse = false;
+
 	//send messages to each component
 	for (unsigned int i = 0; i < szQueueNames.size(); i++)
 	{
@@ -90,8 +92,6 @@ bool Autonomous::MultiCommandResponse(vector<char*> szQueueNames, vector<Message
 		write(iPipeXmt, (char*) &Message, sizeof(RobotMessage));
 		close(iPipeXmt);
 	}
-
-	bReceivedCommandResponse = false;
 
 	while (uResponseCount < szQueueNames.size())
 	{
@@ -179,8 +179,9 @@ bool Autonomous::Move(char *pCurrLinePos) {
 	{
 		return (false);
 	}
+
 	Message.command = COMMAND_DRIVETRAIN_AUTO_MOVE;
-	Message.params.tankDrive.left = fLeft;
+	Message.params.tankDrive.left =  -fLeft;
 	Message.params.tankDrive.right = fRight;
 
 	return (CommandNoResponse(DRIVETRAIN_QUEUE));
@@ -299,7 +300,6 @@ bool Autonomous::Turn(char *pCurrLinePos) {
 	char *pToken;
 	float fAngle;
 	float fTimeout;
-
 	// parse remainder of line to get target angle and timeout
 	pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
 
