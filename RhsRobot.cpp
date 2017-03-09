@@ -67,7 +67,7 @@ void RhsRobot::Init() {
 	pController_1 = new Joystick(0);
 	pController_2 = new Joystick(1);
 	pDrivetrain = new Drivetrain();
-	pClimber = new Climber();
+//	pClimber = new Climber();
 	pHopper = new Hopper();
 	pGearIntake = new GearIntake();
 	pAutonomous = new Autonomous();
@@ -204,12 +204,14 @@ void RhsRobot::Run() {
 		else if (GEAR_INTAKE_RELEASE)
 		{
 			robotMessage.command = COMMAND_GEARINTAKE_RELEASE;
-			robotMessage.params.gear.GearRelease = 1.0;
+			robotMessage.params.gear.GearRelease = 0.5;
 			pGearIntake->SendMessage(&robotMessage);
 		}
 		else
 		{
-			robotMessage.command = COMMAND_GEARINTAKE_TENSION;
+			//robotMessage.command = COMMAND_GEARINTAKE_HOLD;
+			robotMessage.command = COMMAND_GEARINTAKE_STOP;
+			//robotMessage.params.gear.GearHold = 0.10;
 			pGearIntake->SendMessage(&robotMessage);
 		}
 	}

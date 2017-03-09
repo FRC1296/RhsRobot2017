@@ -21,7 +21,7 @@
 Climber::Climber()
 : ComponentBase(CLIMBER_TASKNAME, CLIMBER_QUEUE, CLIMBER_PRIORITY)
 {
-#ifndef USING_SOFTWARE_ROBOT
+	//TODO: add member objects
 	pClimberMotor1 = new CANTalon(CAN_CLIMBER_MOTOR);
 	pClimberMotor2 = new CANTalon(CAN_CLIMBER_MOTOR_SLAVE);
 
@@ -35,7 +35,6 @@ Climber::Climber()
 
 	pClimberMotor2->ConfigNeutralMode(CANTalon::kNeutralMode_Brake);
 	pClimberMotor2->SetControlMode(CANTalon::kPercentVbus);
-#endif // USING_SOFTWARE_ROBOT
 
 	pTask = new std::thread(&Climber::StartTask, this, CLIMBER_TASKNAME, CLIMBER_PRIORITY);
 	wpi_assert(pTask);
@@ -75,41 +74,33 @@ void Climber::OnStateChange()
 
 void Climber::Run()
 {
-#ifndef USING_SOFTWARE_ROBOT
-	float StopMotor = pClimberMotor1->GetOutputCurrent();
-	SmartDashboard::PutNumber("Climber1 (1)", StopMotor);
+	SmartDashboard::PutNumber("Climber1 (1)", pClimberMotor1->GetOutputCurrent());
+	float StopMotor = SmartDashboard::PutNumber("Climber1 (1)", pClimberMotor1->GetOutputCurrent());
 
-	if(StopMotor>=40.0)
+	if(StopMotor>=40)
 	{
-		pClimberMotor1->Set(0.0);
-		pClimberMotor2->Set(0.0);
+		pClimberMotor1->Set(0);
+		pClimberMotor2->Set(0);
 	}
 
 	else
-#endif // USING_SOFTWARE_ROBOT
 	{
 		switch(localMessage.command)			//Reads the message command
 		{
 	//TODO add command cases for Climber
 			case COMMAND_CLIMBER_UP:
-#ifndef USING_SOFTWARE_ROBOT
 				pClimberMotor1->Set(localMessage.params.climber.ClimbUp);
 				pClimberMotor2->Set(localMessage.params.climber.ClimbUp*-1);
-#endif // USING_SOFTWARE_ROBOT
 				break;
 
 			case COMMAND_CLIMBER_DOWN:
-#ifndef USING_SOFTWARE_ROBOT
 				pClimberMotor1->Set(localMessage.params.climber.ClimbDown);
 				pClimberMotor2->Set(localMessage.params.climber.ClimbDown*-1);
-#endif // USING_SOFTWARE_ROBOT
 				break;
 
 			case COMMAND_CLIMBER_STOP:
-#ifndef USING_SOFTWARE_ROBOT
 				pClimberMotor1->Set(0);
 				pClimberMotor2->Set(0);
-#endif // USING_SOFTWARE_ROBOT
 				break;
 
 			case COMMAND_SYSTEM_MSGTIMEOUT:  // what should we do if we do not get a timely message?

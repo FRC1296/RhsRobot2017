@@ -23,10 +23,8 @@
 Hopper::Hopper():
 ComponentBase(HOPPER_TASKNAME, HOPPER_QUEUE, HOPPER_PRIORITY)
 {
-#ifndef USING_SOFTWARE_ROBOT
 	pHopperMotor = new CANTalon(CAN_HOPPER_MOTOR);
-#endif  // USING_SOFTWARE_ROBOT
-
+	//TODO: add member objects
 	pTask = new std::thread(&Hopper::StartTask, this, HOPPER_TASKNAME, HOPPER_PRIORITY);
 	wpi_assert(pTask);
 };
@@ -63,9 +61,8 @@ void Hopper::OnStateChange()
 
 void Hopper::Run()
 {
-#ifndef USING_SOFTWARE_ROBOT
-	float StopMotor = pHopperMotor->GetOutputCurrent();
-	SmartDashboard::PutNumber("Climber1 (1)", StopMotor);
+	SmartDashboard::PutNumber("Climber1 (1)", pHopperMotor->GetOutputCurrent());
+	float StopMotor = SmartDashboard::PutNumber("Climber1 (1)", pHopperMotor->GetOutputCurrent());
 
 	if(StopMotor >= 40)
 	{
@@ -73,27 +70,20 @@ void Hopper::Run()
 	}
 
 	else
-#endif  // USING_SOFTWARE_ROBOT
 	{
 		switch(localMessage.command)			//Reads the message command
 		{
 		//TODO add command cases for Hopper
 		case COMMAND_HOPPER_UP:
-#ifndef USING_SOFTWARE_ROBOT
 			pHopperMotor->Set(localMessage.params.hopper.HopUp);
-#endif  // USING_SOFTWARE_ROBOT
 			break;
 
 		case COMMAND_HOPPER_DOWN:
-#ifndef USING_SOFTWARE_ROBOT
 			pHopperMotor->Set(localMessage.params.hopper.HopDown*-1);
-#endif  // USING_SOFTWARE_ROBOT
 			break;
 
 		case COMMAND_HOPPER_STOP:
-#ifndef USING_SOFTWARE_ROBOT
 			pHopperMotor->Set(0);
-#endif  // USING_SOFTWARE_ROBOT
 			break;
 
 		default: break;

@@ -29,7 +29,7 @@
 using namespace std;
 
 
-void Drivetrain::StartStraightDrive (float speed, float distance, float time)
+void Drivetrain::StartStraightDrive (float speed, float time, float distance)
 {
 	// start a timer so we do not spend forever in this loop
 
@@ -38,14 +38,11 @@ void Drivetrain::StartStraightDrive (float speed, float distance, float time)
 
 	// set relative encoder position, we'll measure from zero
 
-	while(pRightMotor->GetEncPosition() && bInAuto)
-	{
-		pRightMotor->SetEncPosition(0);
-		Wait(.005);
-	}
+	pLeftMotor->SetEncPosition(0);
 
-	fTurnAngle = 0.0;
-	pGyro->Zero();
+	// set relative angle, we'll measure from current angle
+
+	fTurnAngle = pGyro->GetAngle();
 
 	// remember the speed and time starting point
 
@@ -54,39 +51,12 @@ void Drivetrain::StartStraightDrive (float speed, float distance, float time)
 
 	// estimate the total distance
 
-	if(bMeasuredMove)
-	{
-		// move the requested distance
-		fStraightDriveDistance = distance/REVSPERFOOT*TALON_COUNTSPERREV;
-	}
-	else if(bMeasuredMoveProximity)
-	{
-		pLed->Set(Relay::kOn);
-
-		// move to a point the requested distance away from the object
-		fStraightDriveDistance = pUltrasonic->GetRangeInches()/12.0 - distance;
-		fStraightDriveDistance = fStraightDriveDistance/REVSPERFOOT*TALON_COUNTSPERREV;
-	}
-	else
-	{
-		fStraightDriveDistance = 0.0;
-	}
-
-	// attempt to adjust for stop time
-
-	if(fStraightDriveDistance > 0.0)
-	{
-		fStraightDriveDistance -= (speed * TALON_COUNTSPERREV);
-	}
-	else if(fStraightDriveDistance < 0.0)
-	{
-		fStraightDriveDistance += (speed * TALON_COUNTSPERREV);
-	}
+	fStraightDriveDistance = (distance/12)/(REVSPERFOOT/TALON_COUNTSPERREV)*4;
 }
 
 void Drivetrain::IterateStraightDrive(void)
 {
-	if(bMeasuredMove || bMeasuredMoveProximity)
+	if(bMeasuredMove)
 	{
 		while(true)
 		{
@@ -97,22 +67,22 @@ void Drivetrain::IterateStraightDrive(void)
 				//SmartDashboard::PutNumber("velocity Right", pRightOneMotor->GetSpeed());
 				//SmartDashboard::PutNumber("velocity Left", pLeftOneMotor->GetSpeed());
 
-				if((float)abs(pRightMotor->GetEncPosition()) < fabs(fStraightDriveDistance))
+				if(pRightMotor->GetEncPosition() < fStraightDriveDistance
+						&& pRightMotor->GetEncPosition() > -fStraightDriveDistance)
 				{
 					StraightDriveLoop(fStraightDriveSpeed);
 					Wait(.005);
 				}
 				else
 				{
-					printf("reached limit traveled %d , needed %d (%d) \n", pRightMotor->GetEncPosition(),
-							(int)(fStraightDriveDistance),
-							(int)(fStraightDriveDistance * (TALON_COUNTSPERREV * REVSPERFOOT)));
+					//printf("reached limit traveled %d , needed %d \n", pRightOneMotor->GetEncPosition(),
+					//		(int)(fStraightDriveDistance * (TALON_COUNTSPERREV * REVSPERFOOT)));
 					break;
 				}
 			}
 			else
 			{
-				printf("not auto or timed out \n");
+				//printf("not auto or timed out \n");
 				break;
 			}
 		}
@@ -122,7 +92,49 @@ void Drivetrain::IterateStraightDrive(void)
 		pLeftMotor->Set(0.0);
 		pRightMotor->Set(0.0);
  		// feed cheezy filters but do not activate motors
-		RunCheezyDrive(false, 0.0, 0.0, false);
+		RunCheezyDrive(true, 0.0, 0.0, false);
+		SendCommandResponse(COMMAND_AUTONOMOUS_RESPONSE_OK);
+	}
+	else if(bMeasuredMoveProximity)
+	{
+		//printf("in move to ultrasonic distance \n");
+
+		while(true)
+		{
+			if ((pAutoTimer->Get() < fStraightDriveTime) && bInAuto)
+			{
+// TODO check ultrasonic position
+// distance here is from wall
+// what should max distance be?  maybe a function of sensor function
+// pUltrasonic->GetRangeInches()
+				if((pRightMotor->GetEncPosition() < fMaxUltrasonicDistance)
+						&& (pRightMotor->GetEncPosition() > -fMaxUltrasonicDistance) &&
+						(pUltrasonic->GetRangeInches() < fStraightDriveDistance))
+				{
+					StraightDriveLoop(fStraightDriveSpeed);
+					Wait(.005);
+				}
+				else
+				{
+					//printf("reached limit traveled %d , needed %d \n", pRightMotor->GetEncPosition(),
+					//		(int)(fStraightDriveDistance * (TALON_COUNTSPERREV * REVSPERFOOT)));
+					break;
+				}
+			}
+			else
+			{
+				//printf("not auto or timed out \n");
+				break;
+			}
+		}
+
+		bDrivingStraight = false;
+		bMeasuredMoveProximity = false;
+		pLeftMotor->Set(0.0);
+		pRightMotor->Set(0.0);
+
+ 		// feed cheezy filters but do not activate motors
+		RunCheezyDrive(true, 0.0, 0.0, false);
 
 		SendCommandResponse(COMMAND_AUTONOMOUS_RESPONSE_OK);
 	}
@@ -139,108 +151,81 @@ void Drivetrain::IterateStraightDrive(void)
 			pRightMotor->Set(0.0);
 
 	 		// feed cheezy filters but do not activate motors
-			RunCheezyDrive(false, 0.0, 0.0, false);
+			RunCheezyDrive(true, 0.0, 0.0, false);
 		}
 	}
-
-	bDrivingStraight = false;
-	bMeasuredMoveProximity = false;
-	pLeftMotor->Set(0.0);
-	pRightMotor->Set(0.0);
-	pLed->Set(Relay::kOff);
-
-		// feed cheezy filters but do not activate motors
-	RunCheezyDrive(false, 0.0, 0.0, false);
-	SendCommandResponse(COMMAND_AUTONOMOUS_RESPONSE_OK);
 }
 
 void Drivetrain::StraightDriveLoop(float speed)
 {
-	float offset;
+	float offset = (pGyro->GetAngle()-fTurnAngle)/45;
 
-	if(bMeasuredMove)
-	{
-		offset = (pGyro->GetAngle()-fTurnAngle)/45;
-		pLeftMotor->Set(-(speed - offset) * FULLSPEED_FROMTALONS);
-		pRightMotor->Set((speed + offset) * FULLSPEED_FROMTALONS);
-	}
-	else if(bMeasuredMoveProximity)
-	{
-		//insert code to get angle offset from pixi
-
-		if(pPixiImageDetect->Get())
-		{
-			// from Mittens code
-
-			offset = 1.0 - pPixiImagePosition->GetVoltage()/3.3*2.0;
-		}
-		else
-		{
-			offset = 0.0;
-		}
-
-		pLeftMotor->Set(-(speed - offset) * FULLSPEED_FROMTALONS);
-		pRightMotor->Set((speed + offset) * FULLSPEED_FROMTALONS);
-	}
+	pLeftMotor->Set(-(speed - offset) * FULLSPEED_FROMTALONS);
+	pRightMotor->Set((speed + offset) * FULLSPEED_FROMTALONS);
 
     // feed cheezy filters but do not activate motors
-	RunCheezyDrive(false, -(pGyro->GetAngle()-fTurnAngle)/45, speed, false);
+	RunCheezyDrive(true, -(pGyro->GetAngle()-fTurnAngle)/45, speed, false);
 }
 
 
 void Drivetrain::StartTurn(float angle, float time)
 {
+	float fCurrentAngle = pGyro->GetAngle();
 	pAutoTimer->Reset();
 	pAutoTimer->Start();
 
+	// convert to +/- 180 degrees
+
+	if(fCurrentAngle > 0.0){
+		while(fCurrentAngle > 180.0){
+			pGyro->SetAngle(fCurrentAngle - 360.0);
+		}
+	}else{
+		while(fCurrentAngle < -180.0){
+			pGyro->SetAngle(fCurrentAngle + 360.0);
+		}
+	}
+
 	fTurnAngle = angle;
 	fTurnTime = time;
-	pGyro->Zero();
-
-	printf("starting to turn %f %f\n", angle, time);
 }
 
 void Drivetrain::IterateTurn(void)
 {
-	float fCurrentAngle;
-	float fCurrentError;
-	float fNextMotor;
+	float fCurrentAngle = pGyro->GetAngle();
+	float fCurrentError = fCurrentAngle - fTurnAngle;
+	float fNextMotor = fCurrentError/180.0 * 1.0;
 
-	if(bTurning)
+	if((fNextMotor > 0.0) && (fNextMotor < fMinimumTurnSpeed))
 	{
-		while(true)
+		fNextMotor = fMinimumTurnSpeed;
+	}
+	else if((fNextMotor < 0.0) && (fNextMotor > -fMinimumTurnSpeed))
+	{
+		fNextMotor = -fMinimumTurnSpeed;
+	}
+
+	if(((fCurrentError >= 1.0) || (fCurrentError <= -1.0)) && (pAutoTimer->Get() < fTurnTime) && bInAuto)
+	{
+		if(fCurrentError > 0.0)
 		{
-			fCurrentAngle = pGyro->GetAngle();
-			fCurrentError = fCurrentAngle - fTurnAngle;
-			fNextMotor = fCurrentError/180.0;
-
-			if((fNextMotor > 0.0) && (fNextMotor < fMinimumTurnSpeed))
-			{
-				fNextMotor = fMinimumTurnSpeed;
-			}
-			else if((fNextMotor < 0.0) && (fNextMotor > -fMinimumTurnSpeed))
-			{
-				fNextMotor = -fMinimumTurnSpeed;
-			}
-
-			if(((fCurrentError >= 1.0) || (fCurrentError <= -1.0)) && (pAutoTimer->Get() < fTurnTime) && bInAuto)
-			{
-				pLeftMotor->Set(fNextMotor * FULLSPEED_FROMTALONS / 10.0);
-				pRightMotor->Set(fNextMotor * FULLSPEED_FROMTALONS / 10.0);
-			}
-			else
-			{
-				break;
-			}
-
-			Wait(0.005);
+			pLeftMotor->Set(0);
+			pRightMotor->Set(fNextMotor * FULLSPEED_FROMTALONS);
 		}
-
+		else
+		{
+			pLeftMotor->Set(fNextMotor * FULLSPEED_FROMTALONS);
+			pRightMotor->Set(0);
+		}
+	}
+	else
+	{
 		pLeftMotor->Set(0.0);
 		pRightMotor->Set(0.0);
 		bTurning = false;
 		SendCommandResponse(COMMAND_AUTONOMOUS_RESPONSE_OK);
 	}
+
 }
 
 

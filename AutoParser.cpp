@@ -19,8 +19,6 @@
 
 using namespace std;
 
-
-
 const char *szTokens[] = {
 		"MODE",
 		"DEBUG",
@@ -29,11 +27,11 @@ const char *szTokens[] = {
 		"END",
 		"DELAY",			//!<(seconds)
 		"MOVE",				//!<(left speed) (right speed)
-		"MMOVE",	        //!<(speed) (distance:inches) (timeout)
-		"PMOVE",	        //!<(speed) (distance:inches) (timeout)
+		"MOVE_MEASURED",	//!<(speed) (distance:inches) (timeout)
+		"MOVE_PROXIMITY",	//!<(speed) (distance:inches) (timeout)
 		"TURN",				//!<(degrees) (timeout)
-		"RGEAR",
-		"HGEAR",
+		"GEAR_RELEASE",
+		"GEAR_HOLD",
 		"NOP" };
 
 bool Autonomous::Evaluate(std::string rStatement) {
@@ -83,7 +81,7 @@ bool Autonomous::Evaluate(std::string rStatement) {
 	if(iCommand == AUTO_TOKEN_LAST) {
 		// no valid token found
 		rStatus.append("no tokens - check script spelling");
-		//printf("%0.3lf %s\n", pDebugTimer->Get(), rStatement.c_str());
+		printf("%0.3lf %s\n", pDebugTimer->Get(), rStatement.c_str());
 		return (true);
 	}
 
