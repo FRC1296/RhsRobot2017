@@ -192,6 +192,7 @@ bool Autonomous::MeasuredMove(char *pCurrLinePos) {
 	char *pToken;
 	float fDistance;
 	float fSpeed;
+	float fTime;
 
 	// parse remainder of line to get length to move
 
@@ -215,11 +216,22 @@ bool Autonomous::MeasuredMove(char *pCurrLinePos) {
 
 	fDistance = atof(pToken);
 
+	pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
+
+	if(pToken == NULL)
+	{
+		SmartDashboard::PutString("Auto Status","EARLY DEATH!");
+		return (false);
+	}
+
+	fTime = atof(pToken);
+
 	// send the message to the drive train
 
 	Message.command = COMMAND_DRIVETRAIN_AUTO_MMOVE;
 	Message.params.mmove.fSpeed = fSpeed;
 	Message.params.mmove.fDistance = fDistance;
+	Message.params.mmove.fTime = fTime;
 
 	return (CommandResponse(DRIVETRAIN_QUEUE));
 }

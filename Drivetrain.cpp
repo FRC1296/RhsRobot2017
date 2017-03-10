@@ -203,7 +203,8 @@ void Drivetrain::Run() {
 			bTurning = false;
 
 			StartStraightDrive(localMessage.params.mmove.fSpeed,
-	 				localMessage.params.mmove.fDistance, 15.0);
+	 				localMessage.params.mmove.fDistance,
+					localMessage.params.mmove.fTime);
 
 	 		// feed cheezy filters but do not activate motors
 	 		RunCheezyDrive(false, 0.0, localMessage.params.mmove.fSpeed, false);
