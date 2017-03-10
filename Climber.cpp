@@ -112,6 +112,11 @@ void Climber::Run()
 #endif // USING_SOFTWARE_ROBOT
 				break;
 
+			case COMMAND_AUTO_CLIMBER:
+				autoClimb= true;
+				AutoClimber(0.50);
+				break;
+
 			case COMMAND_SYSTEM_MSGTIMEOUT:  // what should we do if we do not get a timely message?
 				break;
 
@@ -119,4 +124,31 @@ void Climber::Run()
 				break;
 		}
 	}
-};
+}
+
+
+void Climber::AutoClimber(float time) {
+	pAutoTimer->Reset();
+	pAutoTimer->Start();
+
+	if (autoClimb) {
+		while (true) {
+			if ((pAutoTimer->Get() < time) && inAuto) {
+#ifndef USING_SOFTWARE_ROBOT
+				pClimberMotor1->Set(localMessage.params.climber.ClimbUp);
+				pClimberMotor2->Set(localMessage.params.climber.ClimbUp*-1);
+#endif // USING_SOFTWARE_ROBOT
+			}
+			else
+			{
+				break;
+			}
+
+			Wait(0.005);
+		}
+#ifndef USING_SOFTWARE_ROBOT
+		pClimberMotor1->Set(0);
+		pClimberMotor2->Set(0);
+#endif // USING_SOFTWARE_ROBOT
+	}
+}

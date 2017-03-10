@@ -34,6 +34,7 @@ const char *szTokens[] = {
 		"TURN",				//!<(degrees) (timeout)
 		"RGEAR",
 		"HGEAR",
+		"CLIMBER",
 		"NOP" };
 
 bool Autonomous::Evaluate(std::string rStatement) {
@@ -193,6 +194,11 @@ bool Autonomous::Evaluate(std::string rStatement) {
 		GearHold();
 		rStatus.append("gear hold");
   	   break;
+
+	case AUTO_TOKEN_CLIMBER:
+		Climber();
+		rStatus.append("climber run");
+		break;
 
 	default:
 		rStatus.append("unknown token");

@@ -24,21 +24,14 @@ GearIntake::GearIntake()
 	wpi_assert(pGearIntakeMotor);
 
 	pGearIntakeMotor->ConfigNeutralMode(CANSpeedController::kNeutralMode_Brake);
-	pGearIntakeMotor->SetFeedbackDevice(CANTalon::CtreMagEncoder_Relative);
-	pGearIntakeMotor->SetPID(kPGainGear, 0.0, 0.0);
 	pGearIntakeMotor->SetCurrentLimit(kMaxCurrentGear);
 	pGearIntakeMotor->ConfigLimitMode(CANTalon::kLimitMode_SwitchInputsOnly);
-
-#ifdef USE_GEARINTAKE_ENCODER
-	pGearIntakeMotor->SetControlMode(CANTalon::kPosition);
-	holdEncoderPos = pGearIntakeMotor->GetPulseWidthPosition();
-	releaseEncoderPos = holdEncoderPos + releaseEncoderPos;
-	pGearIntakeMotor->Set(holdEncoderPos);
-#else
 	pGearIntakeMotor->SetControlMode(CANTalon::kPercentVbus);
-#endif
 	pGearIntakeMotor->Enable();
 #endif  // USING_SOFTWARE_ROBOT
+
+	pStateTimer = new Timer;
+
 	pTask = new std::thread(&GearIntake::StartTask, this, GEARINTAKE_TASKNAME, GEARINTAKE_PRIORITY);
 	wpi_assert(pTask);
 };
@@ -71,6 +64,7 @@ void GearIntake::OnStateChange()
 		default:
 			break;
 	}
+
 };
 
 void GearIntake::Run()
@@ -79,41 +73,25 @@ void GearIntake::Run()
 	{
 		case COMMAND_GEARINTAKE_RELEASE:
 #ifndef USING_SOFTWARE_ROBOT
-#ifdef USE_GEARINTAKE_ENCODER
-			pGearIntakeMotor->Set(releaseEncoderPos);
-#else
-			pGearIntakeMotor->Set(localMessage.params.gear.GearRelease);
-#endif
+			//pGearIntakeMotor->Set(localMessage.params.gear.GearRelease);
 #endif  // USING_SOFTWARE_ROBOT
 			break;
 
 		case COMMAND_GEARINTAKE_HOLD:
 #ifndef USING_SOFTWARE_ROBOT
-#ifdef USE_GEARINTAKE_ENCODER
-			pGearIntakeMotor->Set(holdEncoderPos);
-#else
-			pGearIntakeMotor->Set(-localMessage.params.gear.GearHold);
-#endif
+			//pGearIntakeMotor->Set(-localMessage.params.gear.GearHold);
 #endif  // USING_SOFTWARE_ROBOT
 			break;
 
 	    case COMMAND_GEARINTAKE_TENSION:
 #ifndef USING_SOFTWARE_ROBOT
-#ifdef USE_GEARINTAKE_ENCODER
-	    	// no need to turn it off, the servo will do that (one hopes)
-#else
-			pGearIntakeMotor->Set(kHoldGearConstant);
-#endif
+			//pGearIntakeMotor->Set(kHoldGearConstant);
 #endif  // USING_SOFTWARE_ROBOT
 			break;
 
 	    case COMMAND_GEARINTAKE_STOP:
 #ifndef USING_SOFTWARE_ROBOT
-#ifdef USE_GEARINTAKE_ENCODER
-	    	// no need to turn it off, the servo will do that (one hopes)
-#else
-			pGearIntakeMotor->Set(0.0);
-#endif
+			//pGearIntakeMotor->Set(0.0);
 #endif  // USING_SOFTWARE_ROBOT
 			break;
 
@@ -131,11 +109,66 @@ void GearIntake::Run()
 	{
 		pGearIntakeMotor->Set(10.0);
 	}
-
-//	SmartDashboard::PutNumber("gear encoder", pGearIntakeMotor->GetPulseWidthPosition());/
-//	SmartDashboard::PutNumber("gear release", releaseEncoderPos);
-//	SmartDashboard::PutNumber("gear hold", holdEncoderPos);
-	SmartDashboard::PutNumber("gear current", pGearIntakeMotor->GetOutputCurrent());
 #endif  // USING_SOFTWARE_ROBOT
+
+#ifndef USING_SOFTWARE_ROBOT
+	switch(State)
+	{
+		case GearIntakeState_Hold:
+			if (pGearIntakeMotor->IsRevLimitSwitchClosed())
+			{
+				pGearIntakeMotor->Set(0.0);
+			}
+			else
+			{
+				pGearIntakeMotor->Set(0.05);
+			}
+
+			if(localMessage.command == COMMAND_GEARINTAKE_RELEASE)
+			{
+				pStateTimer->Reset();
+				pStateTimer->Start();
+				State = GearIntakeState_HoldToRelease;
+			}
+			break;
+
+		case GearIntakeState_Release:
+			pGearIntakeMotor->Set(0.0);
+
+			if(localMessage.command == COMMAND_GEARINTAKE_HOLD)
+			{
+				pStateTimer->Reset();
+				pStateTimer->Start();
+				State = GearIntakeState_ReleaseToHold;
+			}
+			break;
+
+		case GearIntakeState_ReleaseToHold:
+			if ((pStateTimer->Get() < 1.0) && (!pGearIntakeMotor->IsRevLimitSwitchClosed()))
+			{
+				pGearIntakeMotor->Set(-1.0);
+			}
+			else
+			{
+				State = GearIntakeState_Hold;
+			}
+			break;
+
+		case GearIntakeState_HoldToRelease:
+			if (pStateTimer->Get() < 1.0)
+			{
+				pGearIntakeMotor->Set(0.5);
+			}
+			else
+			{
+				State = GearIntakeState_Release;
+			}
+			break;
+
+		default:
+			break;
+	}
+#endif  // USING_SOFTWARE_ROBOT
+
 };
 

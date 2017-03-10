@@ -36,9 +36,14 @@ public:
 private:
 	CANTalon* pClimberMotor1;
 	CANTalon* pClimberMotor2;
+	Timer* pAutoTimer;
+
+	bool autoClimb;
+	bool inAuto;
 
 	void OnStateChange();
 	void Run();
+	void AutoClimber(float);
 };
 
 #endif			//Climber_H

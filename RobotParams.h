@@ -95,7 +95,7 @@ const int CAN_GEARINTAKE_MOTOR = 8;
 //EXAMPLE: const int DIO_DRIVETRAIN_BEAM_BREAK = 0;
 const int DIO_ULTRASONIC_INPUT = 0;
 const int DIO_ULTRASONIC_OUTPUT = 1;
-const int DIO_PIXI = 2;
+const int DIO_PIXI = 3;
 
 //Solenoid - Assigns names to Solenoid ports 1-8 on the roboRio
 //EXAMPLE: const int SOL_DRIVETRAIN_SOLENOID_SHIFT_IN = 1;

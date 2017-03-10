@@ -78,6 +78,7 @@ enum MessageCommand {
 	COMMAND_CLIMBER_UP,
 	COMMAND_CLIMBER_DOWN,
 	COMMAND_CLIMBER_STOP,
+	COMMAND_AUTO_CLIMBER,
 
 	COMMAND_GEARINTAKE_HOLD,
 	COMMAND_GEARINTAKE_RELEASE,
@@ -98,6 +99,7 @@ struct MoveParams {
 struct MeasuredMoveParams {
 	float fSpeed;
 	float fDistance;
+	float fTime;
 };
 
 struct ProximityMoveParams {

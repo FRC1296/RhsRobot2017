@@ -333,7 +333,7 @@ bool Autonomous::GearRelease()
 	// move measure distance forward/backward
 
 	Message.command = COMMAND_GEARINTAKE_RELEASE;
-	CommandNoResponse(DRIVETRAIN_QUEUE);
+	CommandNoResponse(GEARINTAKE_QUEUE);
 	return (true);
 }
 
@@ -342,6 +342,14 @@ bool Autonomous::GearHold()
 	// move measure distance forward/backward
 
 	Message.command = COMMAND_GEARINTAKE_HOLD;
-	CommandNoResponse(DRIVETRAIN_QUEUE);
+	CommandNoResponse(GEARINTAKE_QUEUE);
 	return (true);
 }
+
+bool Autonomous::Climber()
+{
+	Message.command = COMMAND_AUTO_CLIMBER;
+	Message.params.climber.ClimbUp=1.0;
+	return (CommandNoResponse(CLIMBER_QUEUE));
+}
+
