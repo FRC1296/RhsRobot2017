@@ -255,8 +255,10 @@ void Drivetrain::Run() {
 	SmartDashboard::PutNumber("right encoder", pRightMotor->GetEncPosition() * METERS_PER_COUNT);
 
 	{
+		float fCentroid;
 		int iRange = pUltrasonic->GetRangeInches();
 		SmartDashboard::PutNumber("ultrasonic", iRange);
+
 
 		if((iRange >= (iIdealGearDistance - iIdealGearDistanceError)) &&
 				(iRange <= (iIdealGearDistance + iIdealGearDistanceError)))
@@ -268,10 +270,11 @@ void Drivetrain::Run() {
 			SmartDashboard::PutBoolean("Gear Pickup Sweet Spot", false);
 		}
 
-		if(pPixiImageDetect->Get())
+		//if(pPixiImageDetect->Get())
+		if(pPixy->GetCentroid(fCentroid))
 		{
 			SmartDashboard::PutBoolean("Pixi Detect", true);
-			SmartDashboard::PutNumber("Pixi Raw", pPixiImagePosition->GetAverageVoltage());
+			SmartDashboard::PutNumber("Pixi Raw", fCentroid);
 		}
 		else
 		{

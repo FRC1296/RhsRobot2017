@@ -23,6 +23,7 @@
 
 #include "Drivetrain.h"
 #include "CheesyDrive.h"
+#include "PixyCam.h"
 #include "RobotParams.h"
 
 
@@ -153,30 +154,33 @@ void Drivetrain::StraightDriveLoop(float speed)
 {
 	float offset;
 
-	//if(bMeasuredMove)
+	if(bMeasuredMove)
 	{
 		offset = (pGyro->GetAngle()-fTurnAngle)/45;
-		pLeftMotor->Set(-(speed - offset) * FULLSPEED_FROMTALONS);
-		pRightMotor->Set((speed + offset) * FULLSPEED_FROMTALONS);
 	}
-	/*else if(bMeasuredMoveProximity)
+	else if(bMeasuredMoveProximity)
 	{
-		if(pPixiImageDetect->Get())
-		{
+		//if(pPixiImageDetect->Get())
+		//{
 			// from Mittens code
 
-			offset = 1.0 - pPixiImagePosition->GetVoltage()/3.3*2.0;
-		}
-		else
+			//offset = 1.0 - pPixiImagePosition->GetVoltage()/3.3*2.0;
+		//}
+		//else
+		//{
+		//	offset = 0.0;
+		//}
+
+		if(!pPixy->GetCentroid(offset))
 		{
-			offset = 0.0;
+			// nothing found, just drive straight
+
+			offset = (pGyro->GetAngle()-fTurnAngle)/45;
 		}
+	}
 
-		// offset = pPixy->GetCentroid();   // if using pixy serial port
-
-		pLeftMotor->Set(-(speed - offset) * FULLSPEED_FROMTALONS);
-		pRightMotor->Set((speed + offset) * FULLSPEED_FROMTALONS);
-	}*/
+	pLeftMotor->Set(-(speed - offset) * FULLSPEED_FROMTALONS);
+	pRightMotor->Set((speed + offset) * FULLSPEED_FROMTALONS);
 }
 
 
