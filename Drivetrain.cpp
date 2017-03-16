@@ -22,6 +22,7 @@
 
 #include "Drivetrain.h"
 #include "CheesyDrive.h"
+#include "PixyCam.h"
 #include "RobotParams.h"
 
 
@@ -110,6 +111,7 @@ Drivetrain::Drivetrain() :
 	fTurnTime = 0.0;
 
 	pCheezy = new CheesyLoop();
+	pPixy = new PixyCam();
 
 	pTask = new std::thread(&Drivetrain::StartTask, this,
 			DRIVETRAIN_TASKNAME, DRIVETRAIN_PRIORITY);
@@ -208,8 +210,6 @@ void Drivetrain::Run() {
 	 				localMessage.params.mmove.fDistance,
 					localMessage.params.mmove.fTime);
 
-	 		// feed cheezy filters but do not activate motors
-	 		RunCheezyDrive(false, 0.0, localMessage.params.mmove.fSpeed, false);
 	 		IterateStraightDrive();
 			break;
 
@@ -222,8 +222,6 @@ void Drivetrain::Run() {
 			StartStraightDrive(localMessage.params.mmove.fSpeed,
 	 				localMessage.params.mmove.fDistance, localMessage.params.mmove.fTime);
 
-	 		// feed cheezy filters but do not activate motors
-	 		RunCheezyDrive(false, 0.0, localMessage.params.mmove.fSpeed, false);
 	 		IterateStraightDrive();
 			break;
 

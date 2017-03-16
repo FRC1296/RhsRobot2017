@@ -120,10 +120,6 @@ void Drivetrain::IterateStraightDrive(void)
 			}
 		}
 
-
- 		// feed cheezy filters but do not activate motors
-		RunCheezyDrive(false, 0.0, 0.0, false);
-
 		SendCommandResponse(COMMAND_AUTONOMOUS_RESPONSE_OK);
 	}
 	else
@@ -137,9 +133,6 @@ void Drivetrain::IterateStraightDrive(void)
 			bDrivingStraight = false;
 			pLeftMotor->Set(0.0);
 			pRightMotor->Set(0.0);
-
-	 		// feed cheezy filters but do not activate motors
-			RunCheezyDrive(false, 0.0, 0.0, false);
 		}
 	}
 
@@ -153,8 +146,6 @@ void Drivetrain::IterateStraightDrive(void)
 	pRightMotor->StopMotor();
 	pLed->Set(Relay::kReverse);
 
-		// feed cheezy filters but do not activate motors
-	RunCheezyDrive(false, 0.0, 0.0, false);
 	SendCommandResponse(COMMAND_AUTONOMOUS_RESPONSE_OK);
 }
 
@@ -170,8 +161,6 @@ void Drivetrain::StraightDriveLoop(float speed)
 	}
 	/*else if(bMeasuredMoveProximity)
 	{
-		//insert code to get angle offset from pixi
-
 		if(pPixiImageDetect->Get())
 		{
 			// from Mittens code
@@ -183,12 +172,11 @@ void Drivetrain::StraightDriveLoop(float speed)
 			offset = 0.0;
 		}
 
+		// offset = pPixy->GetCentroid();   // if using pixy serial port
+
 		pLeftMotor->Set(-(speed - offset) * FULLSPEED_FROMTALONS);
 		pRightMotor->Set((speed + offset) * FULLSPEED_FROMTALONS);
 	}*/
-
-    // feed cheezy filters but do not activate motors
-	RunCheezyDrive(false, -(pGyro->GetAngle()-fTurnAngle)/45, speed, false);
 }
 
 

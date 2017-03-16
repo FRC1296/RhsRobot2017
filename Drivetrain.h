@@ -44,6 +44,7 @@ const int iIdealGearDistance = 10;    // 10" need to get this right (used for in
 const int iIdealGearDistanceError = 1;
 
 class CheesyLoop;
+class PixyCam;
 
 class Drivetrain : public ComponentBase
 {
@@ -95,6 +96,7 @@ private:
 	bool bInAuto;
 
 	CheesyLoop *pCheezy;
+	PixyCam *pPixy;
 };
 
 #endif			//DRIVETRAIN_H

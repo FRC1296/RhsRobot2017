@@ -8,7 +8,6 @@
  * for a given subsystem.
  */
 
-#include "WPILib.h"
 #include "CheesyDrive.h"
 
 CheesyLoop::CheesyLoop()
