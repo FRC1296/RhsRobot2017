@@ -29,6 +29,7 @@ RhsRobot::RhsRobot() {
 	camera = CameraServer::GetInstance()->StartAutomaticCapture();
 	camera.SetVideoMode(cs::VideoMode::kMJPEG, 320, 240, 15);
 
+
     // set new object pointers to NULL here
 
 	iLoop = 0;            // a helpful little loop counter
@@ -130,8 +131,14 @@ void RhsRobot::Run() {
 	{
 		if(GetCurrentRobotState() == ROBOT_STATE_AUTONOMOUS)
 		{
+			camera.SetVideoMode(cs::VideoMode::kMJPEG, 320, 240, 1);
+
 			// all messages to components will come from the autonomous task
 			return;
+		}
+		else
+		{
+			camera.SetVideoMode(cs::VideoMode::kMJPEG, 320, 240, 15);
 		}
 	}
 
@@ -142,7 +149,18 @@ void RhsRobot::Run() {
 		 			robotMessage.params.cheezyDrive.throttle = CHEEZY_DRIVE_THROTTLE;
 		 			robotMessage.params.cheezyDrive.bQuickturn = CHEEZY_DRIVE_QUICKTURN;
 		 			pDrivetrain->SendMessage(&robotMessage);
+		 if(PIXIE_LIGHT)
+		 {
+			 robotMessage.command = COMMAND_DRIVETRAIN_PLED_ON;
+			 pDrivetrain->SendMessage(&robotMessage);
+		 }
+		 else
+		 {
+			 robotMessage.command = COMMAND_DRIVETRAIN_PLED_OFF;
+			 pDrivetrain->SendMessage(&robotMessage);
+		 }
 	}
+
 
 	if (pHopper)
 	{

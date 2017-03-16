@@ -61,9 +61,11 @@ void Drivetrain::StartStraightDrive (float speed, float distance, float time)
 	}
 	else if(bMeasuredMoveProximity)
 	{
-		pLed->Set(Relay::kOn);
+		pLed->Set(Relay::kForward);
+		Wait(0.5);
 
 		// move to a point the requested distance away from the object
+
 		fStraightDriveDistance = pUltrasonic->GetRangeInches()/12.0 - distance;
 		fStraightDriveDistance = fStraightDriveDistance/REVSPERFOOT*TALON_COUNTSPERREV;
 	}
@@ -104,23 +106,21 @@ void Drivetrain::IterateStraightDrive(void)
 				}
 				else
 				{
-					printf("reached limit traveled %d , needed %d (%d) \n", pRightMotor->GetEncPosition(),
-							(int)(fStraightDriveDistance),
-							(int)(fStraightDriveDistance * (TALON_COUNTSPERREV * REVSPERFOOT)));
+					//printf("reached limit traveled %d , needed %d (%d) \n", pRightMotor->GetEncPosition(),
+					//		(int)(fStraightDriveDistance),
+					//		(int)(fStraightDriveDistance * (TALON_COUNTSPERREV * REVSPERFOOT)));
+
 					break;
 				}
 			}
 			else
 			{
-				printf("not auto or timed out \n");
+				//printf("not auto or timed out \n");
 				break;
 			}
 		}
 
-		bDrivingStraight = false;
-		bMeasuredMove = false;
-		pLeftMotor->Set(0.0);
-		pRightMotor->Set(0.0);
+
  		// feed cheezy filters but do not activate motors
 		RunCheezyDrive(false, 0.0, 0.0, false);
 
@@ -147,7 +147,11 @@ void Drivetrain::IterateStraightDrive(void)
 	bMeasuredMoveProximity = false;
 	pLeftMotor->Set(0.0);
 	pRightMotor->Set(0.0);
-	pLed->Set(Relay::kOff);
+	pLeftMotor->ClearError();
+	pRightMotor->ClearError();
+	pLeftMotor->StopMotor();
+	pRightMotor->StopMotor();
+	pLed->Set(Relay::kReverse);
 
 		// feed cheezy filters but do not activate motors
 	RunCheezyDrive(false, 0.0, 0.0, false);
@@ -158,13 +162,13 @@ void Drivetrain::StraightDriveLoop(float speed)
 {
 	float offset;
 
-	if(bMeasuredMove)
+	//if(bMeasuredMove)
 	{
 		offset = (pGyro->GetAngle()-fTurnAngle)/45;
 		pLeftMotor->Set(-(speed - offset) * FULLSPEED_FROMTALONS);
 		pRightMotor->Set((speed + offset) * FULLSPEED_FROMTALONS);
 	}
-	else if(bMeasuredMoveProximity)
+	/*else if(bMeasuredMoveProximity)
 	{
 		//insert code to get angle offset from pixi
 
@@ -181,7 +185,7 @@ void Drivetrain::StraightDriveLoop(float speed)
 
 		pLeftMotor->Set(-(speed - offset) * FULLSPEED_FROMTALONS);
 		pRightMotor->Set((speed + offset) * FULLSPEED_FROMTALONS);
-	}
+	}*/
 
     // feed cheezy filters but do not activate motors
 	RunCheezyDrive(false, -(pGyro->GetAngle()-fTurnAngle)/45, speed, false);
@@ -196,8 +200,6 @@ void Drivetrain::StartTurn(float angle, float time)
 	fTurnAngle = angle;
 	fTurnTime = time;
 	pGyro->Zero();
-
-	printf("starting to turn %f %f\n", angle, time);
 }
 
 void Drivetrain::IterateTurn(void)
@@ -238,6 +240,10 @@ void Drivetrain::IterateTurn(void)
 
 		pLeftMotor->Set(0.0);
 		pRightMotor->Set(0.0);
+		pLeftMotor->ClearError();
+		pRightMotor->ClearError();
+		pLeftMotor->StopMotor();
+		pRightMotor->StopMotor();
 		bTurning = false;
 		SendCommandResponse(COMMAND_AUTONOMOUS_RESPONSE_OK);
 	}

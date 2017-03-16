@@ -36,6 +36,9 @@ Climber::Climber()
 	pClimberMotor2->ConfigNeutralMode(CANTalon::kNeutralMode_Brake);
 	pClimberMotor2->SetControlMode(CANTalon::kPercentVbus);
 #endif // USING_SOFTWARE_ROBOT
+	pAutoTimer = new Timer();
+	inAuto = false;
+	autoClimb = false;
 
 	pTask = new std::thread(&Climber::StartTask, this, CLIMBER_TASKNAME, CLIMBER_PRIORITY);
 	wpi_assert(pTask);
@@ -54,18 +57,23 @@ void Climber::OnStateChange()
 	switch(localMessage.command)
 		{
 			case COMMAND_ROBOT_STATE_AUTONOMOUS:
+				inAuto = true;
 				break;
 
 			case COMMAND_ROBOT_STATE_TEST:
+				inAuto = false;
 				break;
 
 			case COMMAND_ROBOT_STATE_TELEOPERATED:
+				inAuto = false;
 				break;
 
 			case COMMAND_ROBOT_STATE_DISABLED:
+				inAuto = false;
 				break;
 
 			case COMMAND_ROBOT_STATE_UNKNOWN:
+				inAuto = false;
 				break;
 
 			default:
@@ -115,6 +123,7 @@ void Climber::Run()
 			case COMMAND_AUTO_CLIMBER:
 				autoClimb= true;
 				AutoClimber(0.50);
+				autoClimb= false;
 				break;
 
 			case COMMAND_SYSTEM_MSGTIMEOUT:  // what should we do if we do not get a timely message?
@@ -136,7 +145,7 @@ void Climber::AutoClimber(float time) {
 			if ((pAutoTimer->Get() < time) && inAuto) {
 #ifndef USING_SOFTWARE_ROBOT
 				pClimberMotor1->Set(localMessage.params.climber.ClimbUp);
-				pClimberMotor2->Set(localMessage.params.climber.ClimbUp*-1);
+				pClimberMotor2->Set(-localMessage.params.climber.ClimbUp);
 #endif // USING_SOFTWARE_ROBOT
 			}
 			else

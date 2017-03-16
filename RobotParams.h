@@ -109,7 +109,7 @@ const int AIO_PIXI = 0;
 
 //Relay I/O - Assigns names to Realy I/O ports 1-8 on the roboRio
 //EXAMPLE: const int RELAY_LED = 0;
-const int RELAY_LED = 0;
+const int RELAY_LED = 1;
 
 //Joystick Input Device Counts - used by the listener to watch buttons and axis
 const int JOYSTICK_BUTTON_COUNT = 10;
@@ -185,6 +185,8 @@ const int POV_STILL = -1;
 
 #define GEAR_INTAKE_HOLD			(pController_1->GetRawButton(L310_BUTTON_X) || pController_2->GetRawButton(L310_BUTTON_X))
 #define GEAR_INTAKE_RELEASE			(pController_1->GetRawButton(L310_BUTTON_Y) || pController_2->GetRawButton(L310_BUTTON_Y))
+
+#define PIXIE_LIGHT					(pController_1->GetRawButton(L310_BUTTON_START) || pController_2->GetRawButton(L310_BUTTON_START))
 
 #endif // USE_L310_FOR_CONTROLLER_1
 

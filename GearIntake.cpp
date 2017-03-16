@@ -121,7 +121,7 @@ void GearIntake::Run()
 			}
 			else
 			{
-				pGearIntakeMotor->Set(0.05);
+				pGearIntakeMotor->Set(-0.05);
 			}
 
 			if(localMessage.command == COMMAND_GEARINTAKE_RELEASE)
@@ -155,9 +155,9 @@ void GearIntake::Run()
 			break;
 
 		case GearIntakeState_HoldToRelease:
-			if (pStateTimer->Get() < 1.0)
+			if (pStateTimer->Get() < 0.8)
 			{
-				pGearIntakeMotor->Set(0.5);
+				pGearIntakeMotor->Set(1.0);
 			}
 			else
 			{

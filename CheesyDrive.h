@@ -67,6 +67,8 @@ class CheesyLoop {
 	CheesyLoop();
  	~CheesyLoop();
 
+ 	bool bEnableServo;
+
 	static void *StartTask(void *pThis, const char* szComponentName, int iPriority)
 	{
 		pthread_setname_np(pthread_self(), szComponentName);
@@ -76,8 +78,6 @@ class CheesyLoop {
 	}
 
 	void Run(void);
-
- 	bool bOutputEnabled;
 
  	void Update(const DrivetrainGoal &goal,
  	    const DrivetrainPosition &position,
@@ -92,6 +92,7 @@ class CheesyLoop {
  	std::thread* pTask;
 
  	mutable priority_recursive_mutex mutexData;
+ 	bool bOutputEnabled;
 
  	void Iterate(const DrivetrainGoal *goal,
  				 const DrivetrainPosition *position,

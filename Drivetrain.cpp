@@ -133,6 +133,7 @@ void Drivetrain::OnStateChange()
 	switch(localMessage.command)
 	{
 		case COMMAND_ROBOT_STATE_AUTONOMOUS:
+			pCheezy->bEnableServo = false;
 			bUnderServoControl = true;
 			bInAuto = true;
 			pLeftMotor->SetControlMode(CANTalon::kSpeed);
@@ -147,6 +148,7 @@ void Drivetrain::OnStateChange()
 		case COMMAND_ROBOT_STATE_DISABLED:
 		case COMMAND_ROBOT_STATE_UNKNOWN:
 		default:
+			pCheezy->bEnableServo = true;
 			bUnderServoControl = false;
 			bInAuto = false;
 			pLeftMotor->SetControlMode(CANTalon::kPercentVbus);
@@ -218,7 +220,7 @@ void Drivetrain::Run() {
 			bTurning = false;
 
 			StartStraightDrive(localMessage.params.mmove.fSpeed,
-	 				localMessage.params.mmove.fDistance, 15.0);
+	 				localMessage.params.mmove.fDistance, localMessage.params.mmove.fTime);
 
 	 		// feed cheezy filters but do not activate motors
 	 		RunCheezyDrive(false, 0.0, localMessage.params.mmove.fSpeed, false);
@@ -231,6 +233,15 @@ void Drivetrain::Run() {
 			StartTurn(localMessage.params.turn.fAngle, localMessage.params.turn.fTimeout);
 
 			IterateTurn();
+			break;
+
+		case COMMAND_DRIVETRAIN_PLED_ON:
+			pLed->Set(Relay::kForward);
+			printf("sup bro");
+			break;
+
+		case COMMAND_DRIVETRAIN_PLED_OFF:
+			pLed->Set(Relay::kReverse);
 			break;
 
 		case COMMAND_SYSTEM_MSGTIMEOUT:  // what should we do if we do not get a timely message?
@@ -279,6 +290,8 @@ void Drivetrain::RunCheezyDrive(bool bEnabled, float fWheel, float fThrottle, bo
     struct DrivetrainPosition Position;
     struct DrivetrainOutput Output;
     struct DrivetrainStatus Status;
+
+
 
 	if(bQuickturn)
 	{

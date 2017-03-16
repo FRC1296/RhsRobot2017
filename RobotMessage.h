@@ -70,6 +70,8 @@ enum MessageCommand {
 	COMMAND_DRIVETRAIN_AUTO_PMOVE,    	//!< Tells Drivetrain to move into proximity of barrier
 	COMMAND_DRIVETRAIN_AUTO_TMOVE,    	//!< Tells Drivetrain to move for an amount of time
 	COMMAND_DRIVETRAIN_TURN,
+	COMMAND_DRIVETRAIN_PLED_ON,
+	COMMAND_DRIVETRAIN_PLED_OFF,
 
 	COMMAND_HOPPER_UP,
 	COMMAND_HOPPER_DOWN,
@@ -84,6 +86,7 @@ enum MessageCommand {
 	COMMAND_GEARINTAKE_RELEASE,
 	COMMAND_GEARINTAKE_TENSION,
 	COMMAND_GEARINTAKE_STOP,
+
 
 	//add new component messages here
 
@@ -105,6 +108,7 @@ struct MeasuredMoveParams {
 struct ProximityMoveParams {
 	float fSpeed;
 	float fDistance;
+	float fTime;
 };
 
 struct TimedMoveParams {

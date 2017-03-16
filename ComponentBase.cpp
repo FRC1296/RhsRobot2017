@@ -69,6 +69,7 @@ void ComponentBase::ReceiveMessage()			//Receives a message and copies it into l
 	}
 	else
 	{
+		localMessage.command = COMMAND_SYSTEM_MSGTIMEOUT;
 		read(iPipeRcv, (char*)&localMessage, sizeof(RobotMessage));
 	}
 }

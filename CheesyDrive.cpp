@@ -14,6 +14,7 @@
 CheesyLoop::CheesyLoop()
 {
 	bOutputEnabled = false;
+	bEnableServo = false;
 	CheezyInit1296();  // initialize the cheezy drive code base
 
 	pTask = new std::thread(&CheesyLoop::StartTask, this, CHEESY_TASKNAME, CHEESY_PRIORITY);
