@@ -1,5 +1,8 @@
 #include "PixyCam.h"
 
+//#define PIXI_SERIAL
+#define PIXI_SPI
+
 PixyCam::PixyCam() {
 
 	bBlockFound = false;
@@ -27,23 +30,42 @@ void PixyCam::Run(void)
 	 uint16_t uPixiWord;
 	 uint16_t uBlockByteCount = 0;
 	 PIXICOM_STATES ePixyComState = PIXYCOM_UNSYNCHED;
+#ifdef PIXI_SERIAL
 	 SerialPort* pCamera;
 
 	 pCamera = new SerialPort(19200, SerialPort::kOnboard, 8,
 			 SerialPort::kParity_None, SerialPort::kStopBits_One);
 
+#endif
+
+#ifdef PIXI_SPI
+	SPI* pCamera;
+
+	pCamera = new SPI(SPI::kOnboardCS0);
+	pCamera->SetMSBFirst();
+	pCamera->SetSampleDataOnRising();
+	pCamera->SetClockActiveHigh();
+	pCamera->SetClockRate(500000);
+
+#endif
 	 while(true){
 		// TODO this is a lot of data, do we need it?  fewer max blocks?
      	//TODO do the math, is this fast enough?
 
 		 // wait for there to be 2 bytes in the buffer
 
+#ifdef PIXI_SERIAL
 		 while(pCamera->GetBytesReceived() < 2)
 		 {
 			 Wait(0.005);
 		 }
 
 		 pCamera->Read((char *)&uPixiData, 2);
+#endif
+
+#ifdef PIXI_SPI
+		 pCamera->Read(false, uPixiData, 2);
+#endif
 		 uPixiWord = (((uint16_t)uPixiData[0] << 8) & 0xFF00) | ((uint16_t)uPixiData[1] & 0x00FF);   // convert to big endian
 
 		 //printf("data = %04X state %d\n", uPixiWord, ePixyComState);
@@ -64,6 +86,8 @@ void PixyCam::Run(void)
 						bBlockFound = false;
 						fCentroid = 0.0;
 					 }
+
+					 Wait(0.0005);
 				 }
 				 break;
 
