@@ -23,12 +23,13 @@ RhsRobot::RhsRobot() {
 	pClimber = NULL;
 	pHopper = NULL;
 	pGearIntake = NULL;
+	pGearFloor = NULL;
 
 	bHopperRunning = false;
+	bGearButtonDown = false;
 
 	camera = CameraServer::GetInstance()->StartAutomaticCapture();
 	camera.SetVideoMode(cs::VideoMode::kMJPEG, 320, 240, 15);
-
 
     // set new object pointers to NULL here
 
@@ -56,6 +57,7 @@ RhsRobot::~RhsRobot() {
 	delete pClimber;
 	delete pHopper;
 	delete pGearIntake;
+	delete pGearFloor;
 
 }
 
@@ -70,7 +72,8 @@ void RhsRobot::Init() {
 	pDrivetrain = new Drivetrain();
 	pClimber = new Climber();
 	pHopper = new Hopper();
-	pGearIntake = new GearIntake();
+	//pGearIntake = new GearIntake();
+	pGearFloor = new GearFloorIntake();
 	pAutonomous = new Autonomous();
 
 	std::vector<ComponentBase *>::iterator nextComponent = ComponentSet.begin();
@@ -98,6 +101,11 @@ void RhsRobot::Init() {
 	if (pGearIntake)
 	{
 		nextComponent = ComponentSet.insert(nextComponent, pGearIntake);
+	}
+
+	if (pGearFloor)
+	{
+		nextComponent = ComponentSet.insert(nextComponent, pGearFloor);
 	}
 
 	// instantiate our other objects here
@@ -188,8 +196,6 @@ void RhsRobot::Run() {
 		}
 	}
 
-
-
 	if (pClimber)
 	{
 		if (CLIMBER_UP)
@@ -228,6 +234,55 @@ void RhsRobot::Run() {
 		else
 		{
 			robotMessage.command = COMMAND_GEARINTAKE_TENSION;
+			pGearIntake->SendMessage(&robotMessage);
+		}
+	}
+
+	if (pGearFloor)
+	{
+		// send message once per button push
+
+		if (GEAR_FLOOR_NEXTPOS)
+		{
+			if(!bGearButtonDown)
+			{
+				robotMessage.command = COMMAND_GEARINTAKE_HOLD;
+				robotMessage.params.gear.GearHold = 1.0;
+				pGearIntake->SendMessage(&robotMessage);
+				bGearButtonDown = true;
+			}
+		}
+		else if (GEAR_FLOOR_PREVPOS)
+		{
+			if(!bGearButtonDown)
+			{
+				robotMessage.command = COMMAND_GEARINTAKE_RELEASE;
+				robotMessage.params.gear.GearRelease = 1.0;
+				pGearIntake->SendMessage(&robotMessage);
+				bGearButtonDown = true;
+			}
+		}
+		else
+		{
+			bGearButtonDown = false;
+		}
+
+		if (GEAR_FLOOR_PULLIN > 0.2)
+		{
+			robotMessage.command = COMMAND_GEARFLOORINTAKE_PULLIN;
+			robotMessage.params.floor.fSpeed = GEAR_FLOOR_PULLIN;
+			pGearIntake->SendMessage(&robotMessage);
+		}
+		else if (GEAR_FLOOR_PUSHOUT < -0.2)
+		{
+			robotMessage.command = COMMAND_GEARFLOORINTAKE_PUSHOUT;
+			robotMessage.params.floor.fSpeed = -GEAR_FLOOR_PUSHOUT;
+			pGearIntake->SendMessage(&robotMessage);
+		}
+		else
+		{
+			robotMessage.command = COMMAND_GEARFLOORINTAKE_STOP;
+			robotMessage.params.floor.fSpeed = 0.0;
 			pGearIntake->SendMessage(&robotMessage);
 		}
 	}

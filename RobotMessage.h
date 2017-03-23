@@ -87,6 +87,13 @@ enum MessageCommand {
 	COMMAND_GEARINTAKE_TENSION,
 	COMMAND_GEARINTAKE_STOP,
 
+	COMMAND_GEARFLOORINTAKE_INTAKEPOS,
+	COMMAND_GEARFLOORINTAKE_RELEASEPOS,
+	COMMAND_GEARFLOORINTAKE_DRIVEPOS,
+	COMMAND_GEARFLOORINTAKE_PULLIN,
+	COMMAND_GEARFLOORINTAKE_PUSHOUT,
+	COMMAND_GEARFLOORINTAKE_STOP,
+
 
 	//add new component messages here
 
@@ -149,6 +156,10 @@ struct GearIntakeParams {
 	float GearRelease;
 };
 
+struct GearFloorParams {
+	float fSpeed;
+};
+
 struct SystemParams {
 	float fBattery;
 };
@@ -182,6 +193,7 @@ union MessageParams {
 	ClimberParams climber;
 	HopperParams hopper;
 	GearIntakeParams gear;
+	GearFloorParams floor;
 	SystemParams system;
 };
 

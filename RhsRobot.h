@@ -12,6 +12,7 @@
 #include "Hopper.h"
 #include "Climber.h"
 #include "GearIntake.h"
+#include "GearFloorIntake.h"
 
 #include <RhsRobotBase.h>
 #include "WPILib.h"
@@ -30,6 +31,7 @@ private:
 	Climber* pClimber;
 	Hopper* pHopper;
 	GearIntake* pGearIntake;
+	GearFloorIntake* pGearFloor;
 
 	cs::UsbCamera camera;
 
@@ -40,6 +42,7 @@ private:
 	void Run();
 
 	bool bHopperRunning;
+	bool bGearButtonDown;
 	int iLoop;
 };
 

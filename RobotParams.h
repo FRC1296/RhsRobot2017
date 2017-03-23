@@ -36,6 +36,7 @@ const int AUTOPARSER_PRIORITY 	= DEFAULT_PRIORITY;
 const int CLIMBER_PRIORITY		= DEFAULT_PRIORITY;
 const int HOPPER_PRIORITY		= DEFAULT_PRIORITY;
 const int GEARINTAKE_PRIORITY	= DEFAULT_PRIORITY;
+const int GEARFLOORINTAKE_PRIORITY	= DEFAULT_PRIORITY;
 
 //Task Names - Used when you view the task list but used by the operating system
 //EXAMPLE: const char* DRIVETRAIN_TASKNAME = "tDrive";
@@ -49,6 +50,7 @@ const char* const AUTOPARSER_TASKNAME	= "tParse";
 const char* const CLIMBER_TASKNAME		= "tClimber";
 const char* const HOPPER_TASKNAME		= "tHopper";
 const char* const GEARINTAKE_TASKNAME	= "tGearIntake";
+const char* const GEARFLOORINTAKE_TASKNAME	= "tGearFloor";
 
 //TODO change these variables throughout the code to PIPE or whatever instead  of QUEUE
 //Queue Names - Used when you want to open the message queue for any task
@@ -62,6 +64,7 @@ const char* const AUTOPARSER_QUEUE 	= "/tmp/qParse";
 const char* const CLIMBER_QUEUE		= "/tmp/qClimber";
 const char* const HOPPER_QUEUE		= "/tmp/qHopper";
 const char* const GEARINTAKE_QUEUE	= "/tmp/qGearIntake";
+const char* const GEARFLOORINTAKE_QUEUE	= "/tmp/qGearFloor";
 
 //PWM Channels - Assigns names to PWM ports 1-10 on the Roborio
 //EXAMPLE: const int PWM_DRIVETRAIN_FRONT_LEFT_MOTOR = 1;
@@ -89,6 +92,8 @@ const int CAN_CLIMBER_MOTOR = 5;
 const int CAN_CLIMBER_MOTOR_SLAVE = 6;
 const int CAN_HOPPER_MOTOR = 7;
 const int CAN_GEARINTAKE_MOTOR = 8;
+const int CAN_FLOORINTAKEROLLER_MOTOR = 8;
+const int CAN_FLOORINTAKEARM_MOTOR = 9;
 
 //Relay Channels - Assigns names to Relay ports 1-8 on the roboRio
 //EXAMPLE: const int RLY_COMPRESSOR = 1;
@@ -187,6 +192,11 @@ const int POV_STILL = -1;
 
 #define GEAR_INTAKE_HOLD			(pController_1->GetRawButton(L310_BUTTON_X) || pController_2->GetRawButton(L310_BUTTON_X))
 #define GEAR_INTAKE_RELEASE			(pController_1->GetRawButton(L310_BUTTON_Y) || pController_2->GetRawButton(L310_BUTTON_Y))
+
+#define GEAR_FLOOR_NEXTPOS			(pController_1->GetRawButton(L310_BUTTON_X) || pController_2->GetRawButton(L310_BUTTON_X))
+#define GEAR_FLOOR_PREVPOS			(pController_1->GetRawButton(L310_BUTTON_Y) || pController_2->GetRawButton(L310_BUTTON_Y))
+#define GEAR_FLOOR_PULLIN			(pController_1->GetRawAxis(L310_TRIGGER_LEFT) + pController_2->GetRawButton(L310_TRIGGER_LEFT))
+#define GEAR_FLOOR_PUSHOUT			(pController_1->GetRawAxis(L310_TRIGGER_RIGHT) + pController_2->GetRawButton(L310_TRIGGER_RIGHT))
 
 #define PIXIE_LIGHT					(pController_1->GetRawButton(L310_BUTTON_START) || pController_2->GetRawButton(L310_BUTTON_START))
 
