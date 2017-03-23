@@ -20,6 +20,16 @@
 #include "WPILib.h"
 
 
+typedef enum ArmPosition
+{
+	ARMPOS_UNKNOWN,
+	ARMPOS_FLOOR,
+	ARMPOS_DRIVE,
+	ARMPOS_RELEASE,
+	ARMPOS_LAST
+} ArmPosition;
+
+
 class GearFloorIntake : public ComponentBase
 {
 public:
@@ -40,6 +50,7 @@ private:
 	float fFloorPosition;
 	float fDrivePosition;
 	float fReleasePosition;
+	ArmPosition eCurrentPosition;
 
 	const float fFromFloorToDrivePos = 250.0;
 	const float fFromFloorToReleasePos = 125.0;

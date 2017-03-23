@@ -246,8 +246,7 @@ void RhsRobot::Run() {
 		{
 			if(!bGearButtonDown)
 			{
-				robotMessage.command = COMMAND_GEARINTAKE_HOLD;
-				robotMessage.params.gear.GearHold = 1.0;
+				robotMessage.command = COMMAND_GEARFLOORINTAKE_PREVPOS;
 				pGearIntake->SendMessage(&robotMessage);
 				bGearButtonDown = true;
 			}
@@ -256,8 +255,7 @@ void RhsRobot::Run() {
 		{
 			if(!bGearButtonDown)
 			{
-				robotMessage.command = COMMAND_GEARINTAKE_RELEASE;
-				robotMessage.params.gear.GearRelease = 1.0;
+				robotMessage.command = COMMAND_GEARFLOORINTAKE_NEXTPOS;
 				pGearIntake->SendMessage(&robotMessage);
 				bGearButtonDown = true;
 			}

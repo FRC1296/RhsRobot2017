@@ -42,6 +42,7 @@ GearFloorIntake::GearFloorIntake()
 	fReleasePosition  = fFloorPosition + fFromFloorToReleasePos;
 	pArmPID->SetSetpoint(fFloorPosition);
 	pArmPID->Enable();
+	eCurrentPosition = ARMPOS_FLOOR;
 
 	pTask = new std::thread(&GearFloorIntake::StartTask, this, GEARFLOORINTAKE_TASKNAME, GEARFLOORINTAKE_PRIORITY);
 	wpi_assert(pTask);
@@ -96,14 +97,63 @@ void GearFloorIntake::Run()
 	{
 		case COMMAND_GEARFLOORINTAKE_INTAKEPOS:
 			pArmPID->SetSetpoint(fFloorPosition);
+			eCurrentPosition = ARMPOS_FLOOR;
 			break;
 
 	    case COMMAND_GEARFLOORINTAKE_DRIVEPOS:
 	    	pArmPID->SetSetpoint(fDrivePosition);
+	    	eCurrentPosition = ARMPOS_DRIVE;
 			break;
 
 		case COMMAND_GEARFLOORINTAKE_RELEASEPOS:
 			pArmPID->SetSetpoint(fReleasePosition);
+			eCurrentPosition = ARMPOS_RELEASE;
+			break;
+
+		case COMMAND_GEARFLOORINTAKE_NEXTPOS:
+			if(eCurrentPosition == ARMPOS_FLOOR)
+			{
+				pArmPID->SetSetpoint(fDrivePosition);
+				eCurrentPosition = ARMPOS_DRIVE;
+			}
+			else if(eCurrentPosition == ARMPOS_DRIVE)
+			{
+				pArmPID->SetSetpoint(fReleasePosition);
+				eCurrentPosition = ARMPOS_RELEASE;
+			}
+			else if(eCurrentPosition == ARMPOS_RELEASE)
+			{
+				pArmPID->SetSetpoint(fReleasePosition);
+				eCurrentPosition = ARMPOS_RELEASE;
+			}
+			else
+			{
+				pArmPID->SetSetpoint(fDrivePosition);
+				eCurrentPosition = ARMPOS_DRIVE;
+			}
+			break;
+
+		case COMMAND_GEARFLOORINTAKE_PREVPOS:
+			if(eCurrentPosition == ARMPOS_FLOOR)
+			{
+				pArmPID->SetSetpoint(fFloorPosition);
+				eCurrentPosition = ARMPOS_FLOOR;
+			}
+			else if(eCurrentPosition == ARMPOS_DRIVE)
+			{
+				pArmPID->SetSetpoint(fFloorPosition);
+				eCurrentPosition = ARMPOS_FLOOR;
+			}
+			else if(eCurrentPosition == ARMPOS_RELEASE)
+			{
+				pArmPID->SetSetpoint(fDrivePosition);
+				eCurrentPosition = ARMPOS_DRIVE;
+			}
+			else
+			{
+				pArmPID->SetSetpoint(fDrivePosition);
+				eCurrentPosition = ARMPOS_DRIVE;
+			}
 			break;
 
 	    case COMMAND_GEARFLOORINTAKE_PULLIN:
