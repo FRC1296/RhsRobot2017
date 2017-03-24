@@ -121,6 +121,13 @@ void Drivetrain::IterateStraightDrive(void)
 			}
 		}
 
+<<<<<<< HEAD
+=======
+
+ 		// feed cheezy filters but do not activate motors
+		RunCheezyDrive(false, 0.0, 0.0, false);
+
+>>>>>>> origin/cheesy
 		SendCommandResponse(COMMAND_AUTONOMOUS_RESPONSE_OK);
 	}
 	else
@@ -154,11 +161,11 @@ void Drivetrain::StraightDriveLoop(float speed)
 {
 	float offset;
 
-	if(bMeasuredMove)
+	//if(bMeasuredMove)
 	{
 		offset = (pGyro->GetAngle()-fTurnAngle)/45;
 	}
-	else if(bMeasuredMoveProximity)
+	/*else if(bMeasuredMoveProximity)
 	{
 		if(pPixiImageDetect->Get())
 		{
@@ -171,6 +178,7 @@ void Drivetrain::StraightDriveLoop(float speed)
 			offset = 0.0;
 		}
 
+<<<<<<< HEAD
 		//if(!pPixy->GetCentroid(offset))
 		//{
 		// nothing found, just drive straight
@@ -185,6 +193,11 @@ void Drivetrain::StraightDriveLoop(float speed)
 			offset = (pGyro->GetAngle()-fTurnAngle)/45;
 		}
 	}
+=======
+		pLeftMotor->Set(-(speed - offset) * FULLSPEED_FROMTALONS);
+		pRightMotor->Set((speed + offset) * FULLSPEED_FROMTALONS);
+	}*/
+>>>>>>> origin/cheesy
 
 	pLeftMotor->Set(-(speed - offset) * FULLSPEED_FROMTALONS);
 	pRightMotor->Set((speed + offset) * FULLSPEED_FROMTALONS);
