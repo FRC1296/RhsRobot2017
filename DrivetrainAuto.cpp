@@ -160,23 +160,22 @@ void Drivetrain::StraightDriveLoop(float speed)
 	}
 	else if(bMeasuredMoveProximity)
 	{
-		//if(pPixiImageDetect->Get())
-		//{
+		if(pPixiImageDetect->Get())
+		{
 			// from Mittens code
 
-			//offset = 1.0 - pPixiImagePosition->GetVoltage()/3.3*2.0;
-		//}
-		//else
-		//{
-		//	offset = 0.0;
-		//}
-
-		if(!pPixy->GetCentroid(offset))
+			offset = 1.0 - pPixiImagePosition->GetVoltage()/3.3*2.0;
+		}		//else
 		{
+			offset = 0.0;
+		}
+
+		//if(!pPixy->GetCentroid(offset))
+		//{
 			// nothing found, just drive straight
 
-			offset = (pGyro->GetAngle()-fTurnAngle)/45;
-		}
+		//	offset = (pGyro->GetAngle()-fTurnAngle)/45;
+		//}
 	}
 
 	pLeftMotor->Set(-(speed - offset) * FULLSPEED_FROMTALONS);

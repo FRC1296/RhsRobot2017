@@ -195,8 +195,8 @@ const int POV_STILL = -1;
 
 #define GEAR_FLOOR_NEXTPOS			(pController_1->GetRawButton(L310_BUTTON_X) || pController_2->GetRawButton(L310_BUTTON_X))
 #define GEAR_FLOOR_PREVPOS			(pController_1->GetRawButton(L310_BUTTON_Y) || pController_2->GetRawButton(L310_BUTTON_Y))
-#define GEAR_FLOOR_PULLIN			(pController_1->GetRawAxis(L310_TRIGGER_LEFT) + pController_2->GetRawButton(L310_TRIGGER_LEFT))
-#define GEAR_FLOOR_PUSHOUT			(pController_1->GetRawAxis(L310_TRIGGER_RIGHT) + pController_2->GetRawButton(L310_TRIGGER_RIGHT))
+#define GEAR_FLOOR_PULLIN			(pController_1->GetRawAxis(L310_TRIGGER_LEFT) + pController_2->GetRawAxis(L310_TRIGGER_LEFT))
+#define GEAR_FLOOR_PUSHOUT			(pController_1->GetRawAxis(L310_TRIGGER_RIGHT) + pController_2->GetRawAxis(L310_TRIGGER_RIGHT))
 
 #define PIXIE_LIGHT					(pController_1->GetRawButton(L310_BUTTON_START) || pController_2->GetRawButton(L310_BUTTON_START))
 
