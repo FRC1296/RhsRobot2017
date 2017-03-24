@@ -17,12 +17,12 @@
 #include <assert.h>
 #include <ComponentBase.h>
 
-#include <string>
 #include <iostream>
 #include <algorithm>
 
 #include "Drivetrain.h"
 #include "CheesyDrive.h"
+#include "PixyCam.h"
 #include "RobotParams.h"
 
 
@@ -49,7 +49,7 @@ Drivetrain::Drivetrain() :
 	pLeftMotor->SelectProfileSlot(0);
 	pLeftMotor->SetPID(TALON_PTERM_L, TALON_ITERM_L, TALON_DTERM_L, TALON_FTERM_L);		// PIDF
 	pLeftMotor->SetIzone(TALON_IZONE);
-	pLeftMotor->SetCloseLoopRampRate(TALON_MAXRAMP);
+	//pLeftMotor->SetCloseLoopRampRate(TALON_MAXRAMP);
 	pLeftMotor->SetInverted(true);
 	pLeftMotor->ConfigNeutralMode(CANSpeedController::kNeutralMode_Brake);
 	pLeftMotor->SetControlMode(CANTalon::kPercentVbus);
@@ -62,9 +62,9 @@ Drivetrain::Drivetrain() :
 	pRightMotor->SetFeedbackDevice(CANTalon::QuadEncoder);
 	pRightMotor->ConfigEncoderCodesPerRev(TALON_COUNTSPERREV);
 	pRightMotor->SelectProfileSlot(0);
-	pRightMotor->SetPID(TALON_PTERM_R, TALON_ITERM_R, TALON_DTERM_R, TALON_FTERM_R);
+	pRightMotor->SetPID(TALON_PTERM_R, TALON_ITERM_R, TALON_DTERM_R, TALON_FTERM_R);  // PIDF
 	pRightMotor->SetIzone(TALON_IZONE);
-	pRightMotor->SetCloseLoopRampRate(TALON_MAXRAMP);
+	//pRightMotor->SetCloseLoopRampRate(TALON_MAXRAMP);
 	pRightMotor->SetInverted(true);
 	pRightMotor->ConfigNeutralMode(CANSpeedController::kNeutralMode_Brake);
 	pRightMotor->SetControlMode(CANTalon::kPercentVbus);
@@ -79,6 +79,10 @@ Drivetrain::Drivetrain() :
 
 	pUltrasonic = new Ultrasonic(DIO_ULTRASONIC_OUTPUT, DIO_ULTRASONIC_INPUT);
 	pUltrasonic->SetAutomaticMode(true);
+
+	pLed = new Relay(RELAY_LED);
+	pPixiImageDetect = new DigitalInput(DIO_PIXI);
+	pPixiImagePosition = new AnalogInput(AIO_PIXI);
 
 	bUnderServoControl = false;
 	bDrivingStraight = false;
@@ -107,6 +111,7 @@ Drivetrain::Drivetrain() :
 	fTurnTime = 0.0;
 
 	pCheezy = new CheesyLoop();
+	pPixy = new PixyCam();
 
 	pTask = new std::thread(&Drivetrain::StartTask, this,
 			DRIVETRAIN_TASKNAME, DRIVETRAIN_PRIORITY);
@@ -130,6 +135,7 @@ void Drivetrain::OnStateChange()
 	switch(localMessage.command)
 	{
 		case COMMAND_ROBOT_STATE_AUTONOMOUS:
+			pCheezy->bEnableServo = false;
 			bUnderServoControl = true;
 			bInAuto = true;
 			pLeftMotor->SetControlMode(CANTalon::kSpeed);
@@ -144,6 +150,7 @@ void Drivetrain::OnStateChange()
 		case COMMAND_ROBOT_STATE_DISABLED:
 		case COMMAND_ROBOT_STATE_UNKNOWN:
 		default:
+			pCheezy->bEnableServo = true;
 			bUnderServoControl = false;
 			bInAuto = false;
 			pLeftMotor->SetControlMode(CANTalon::kPercentVbus);
@@ -181,7 +188,7 @@ void Drivetrain::Run() {
 			bDrivingStraight = false;
 			bTurning = false;
 
-			if(bUnderServoControl)
+		    if(bUnderServoControl)
 			{
 				pLeftMotor->Set(localMessage.params.move.fLeft * FULLSPEED_FROMTALONS);
 				pRightMotor->Set(localMessage.params.move.fRight * FULLSPEED_FROMTALONS);
@@ -200,10 +207,9 @@ void Drivetrain::Run() {
 			bTurning = false;
 
 			StartStraightDrive(localMessage.params.mmove.fSpeed,
-	 				15.0, localMessage.params.mmove.fDistance);
+	 				localMessage.params.mmove.fDistance,
+					localMessage.params.mmove.fTime);
 
-	 		// feed cheezy filters but do not activate motors
-	 		RunCheezyDrive(false, 0.0, localMessage.params.mmove.fSpeed, false);
 	 		IterateStraightDrive();
 			break;
 
@@ -214,10 +220,8 @@ void Drivetrain::Run() {
 			bTurning = false;
 
 			StartStraightDrive(localMessage.params.mmove.fSpeed,
-	 				15.0, localMessage.params.mmove.fDistance);
+	 				localMessage.params.mmove.fDistance, localMessage.params.mmove.fTime);
 
-	 		// feed cheezy filters but do not activate motors
-	 		RunCheezyDrive(false, 0.0, localMessage.params.mmove.fSpeed, false);
 	 		IterateStraightDrive();
 			break;
 
@@ -226,16 +230,16 @@ void Drivetrain::Run() {
 			bTurning = true;
 			StartTurn(localMessage.params.turn.fAngle, localMessage.params.turn.fTimeout);
 
-			// contribute to cheezy Kalman filter
+			IterateTurn();
+			break;
 
-			if(localMessage.params.turn.fAngle > 0.0)
-			{
-				RunCheezyDrive(false, 0.5, 0.0, false);
-			}
-			else
-			{
-				RunCheezyDrive(false, -0.5, 0.0, false);
-			}
+		case COMMAND_DRIVETRAIN_PLED_ON:
+			pLed->Set(Relay::kForward);
+			printf("sup bro");
+			break;
+
+		case COMMAND_DRIVETRAIN_PLED_OFF:
+			pLed->Set(Relay::kReverse);
 			break;
 
 		case COMMAND_SYSTEM_MSGTIMEOUT:  // what should we do if we do not get a timely message?
@@ -246,10 +250,39 @@ void Drivetrain::Run() {
 	}
 
 	SmartDashboard::PutNumber("Battery", fBatteryVoltage);
-	SmartDashboard::PutNumber("angle", pGyro->GetAngle() * 3.141519 / 180.0);
+	SmartDashboard::PutNumber("angle", pGyro->GetAngle());
 	SmartDashboard::PutNumber("left encoder", -pLeftMotor->GetEncPosition() * METERS_PER_COUNT);
 	SmartDashboard::PutNumber("right encoder", pRightMotor->GetEncPosition() * METERS_PER_COUNT);
-	SmartDashboard::PutNumber("ultrasonic", pUltrasonic->GetRangeInches() / 12);
+
+	{
+		float fCentroid;
+		int iRange = pUltrasonic->GetRangeInches();
+		SmartDashboard::PutNumber("ultrasonic", iRange);
+
+
+		if((iRange >= (iIdealGearDistance - iIdealGearDistanceError)) &&
+				(iRange <= (iIdealGearDistance + iIdealGearDistanceError)))
+		{
+			SmartDashboard::PutBoolean("Gear Pickup Sweet Spot", true);
+		}
+		else
+		{
+			SmartDashboard::PutBoolean("Gear Pickup Sweet Spot", false);
+		}
+
+		//if(pPixiImageDetect->Get())
+		if(pPixy->GetCentroid(fCentroid))
+		{
+			SmartDashboard::PutBoolean("Pixi Detect", true);
+			SmartDashboard::PutNumber("Pixi Raw", fCentroid);
+		}
+		else
+		{
+			SmartDashboard::PutBoolean("Pixi Detect", false);
+			SmartDashboard::PutNumber("Pixi Raw", 999.9);
+		}
+	}
+
 }
 
 void Drivetrain::RunCheezyDrive(bool bEnabled, float fWheel, float fThrottle, bool bQuickturn)
@@ -258,6 +291,8 @@ void Drivetrain::RunCheezyDrive(bool bEnabled, float fWheel, float fThrottle, bo
     struct DrivetrainPosition Position;
     struct DrivetrainOutput Output;
     struct DrivetrainStatus Status;
+
+
 
 	if(bQuickturn)
 	{

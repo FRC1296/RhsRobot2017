@@ -19,12 +19,18 @@
 //Robot
 #include "WPILib.h"
 
-// define to use the encoder to open/close gear intake motor
-#define  USE_GEARINTAKE_ENCODER
+const float kPGainGear = 0.10;
+const float kMaxCurrentGear = 20.0;
+const float kHoldGearConstant = -0.025;
 
-const int releaseEncoderPos = 3246;
-const int holdEncoderPos = (releaseEncoderPos-2932-3246);
-const float kPGainGear = 0.15;
+typedef enum GearIntakeState
+{
+	GearIntakeState_Hold,
+	GearIntakeState_Release,
+	GearIntakeState_ReleaseToHold,
+	GearIntakeState_HoldToRelease,
+	GearIntakeState_Last
+} GearIntakeState;
 
 class GearIntake : public ComponentBase
 {
@@ -41,6 +47,8 @@ public:
 
 private:
 	CANTalon* pGearIntakeMotor;
+	GearIntakeState State = GearIntakeState_Hold;
+	Timer *pStateTimer;
 
 	void OnStateChange();
 	void Run();

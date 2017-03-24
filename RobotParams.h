@@ -29,6 +29,7 @@ const int DEFAULT_PRIORITY      = 50;
 const int COMPONENT_PRIORITY 	= DEFAULT_PRIORITY;
 const int DRIVETRAIN_PRIORITY 	= DEFAULT_PRIORITY;
 const int CHEESY_PRIORITY 	    = DEFAULT_PRIORITY;
+const int PIXI_PRIORITY 	    = DEFAULT_PRIORITY;
 const int AUTONOMOUS_PRIORITY 	= DEFAULT_PRIORITY;
 const int AUTOEXEC_PRIORITY 	= DEFAULT_PRIORITY;
 const int AUTOPARSER_PRIORITY 	= DEFAULT_PRIORITY;
@@ -40,7 +41,8 @@ const int GEARINTAKE_PRIORITY	= DEFAULT_PRIORITY;
 //EXAMPLE: const char* DRIVETRAIN_TASKNAME = "tDrive";
 const char* const COMPONENT_TASKNAME	= "tComponent";
 const char* const DRIVETRAIN_TASKNAME	= "tDrive";
-const char* const CHEESY_TASKNAME	    = "tDrive";
+const char* const CHEESY_TASKNAME	    = "tCheesy";
+const char* const PIXI_TASKNAME	    	= "tPixi";
 const char* const AUTONOMOUS_TASKNAME	= "tAuto";
 const char* const AUTOEXEC_TASKNAME		= "tAutoEx";
 const char* const AUTOPARSER_TASKNAME	= "tParse";
@@ -88,22 +90,28 @@ const int CAN_CLIMBER_MOTOR_SLAVE = 6;
 const int CAN_HOPPER_MOTOR = 7;
 const int CAN_GEARINTAKE_MOTOR = 8;
 
-//Relay Channels - Assigns names to Relay ports 1-8 on the Roborio
+//Relay Channels - Assigns names to Relay ports 1-8 on the roboRio
 //EXAMPLE: const int RLY_COMPRESSOR = 1;
 
-//Digital I/O - Assigns names to Digital I/O ports 1-14 on the Roborio
+//Digital I/O - Assigns names to Digital I/O ports 1-14 on the roboRio
 //EXAMPLE: const int DIO_DRIVETRAIN_BEAM_BREAK = 0;
 const int DIO_ULTRASONIC_INPUT = 0;
 const int DIO_ULTRASONIC_OUTPUT = 1;
+const int DIO_PIXI = 3;
 
-//Solenoid - Assigns names to Solenoid ports 1-8 on the 9403
+//Solenoid - Assigns names to Solenoid ports 1-8 on the roboRio
 //EXAMPLE: const int SOL_DRIVETRAIN_SOLENOID_SHIFT_IN = 1;
 
 //I2C - Assigns names to I2C ports 1-2 on the Roborio
 //EXAMPLE: const int IO2C_AUTO_ACCEL = 1;
 
-//Analog I/O - Assigns names to Analog I/O ports 1-8 on Analog Breakout Module
+//Analog I/O - Assigns names to Analog I/O ports 1-8 on the roboRio
 //EXAMPLE: const int AIO_BATTERY = 8;
+const int AIO_PIXI = 0;
+
+//Relay I/O - Assigns names to Realy I/O ports 1-8 on the roboRio
+//EXAMPLE: const int RELAY_LED = 0;
+const int RELAY_LED = 1;
 
 //Joystick Input Device Counts - used by the listener to watch buttons and axis
 const int JOYSTICK_BUTTON_COUNT = 10;
@@ -171,14 +179,16 @@ const int POV_STILL = -1;
 #define CHEEZY_DRIVE_SPIN		    (-pController_1->GetRawAxis(L310_TRIGGER_LEFT) + Controller_1->GetRawAxis(L310_TRIGGER_RIGHT))
 #define CHEEZY_DRIVE_QUICKTURN		(pController_1->GetRawButton(L310_BUTTON_BUMPER_LEFT))
 
-#define HOPPER_UP					(pController_1->GetRawButton(L310_BUTTON_A))
-#define HOPPER_DOWN					(pController_1->GetRawButton(L310_BUTTON_B))
+#define HOPPER_UP					(pController_1->GetRawButton(L310_BUTTON_A) || pController_2->GetRawButton(L310_BUTTON_A))
+#define HOPPER_DOWN					(pController_1->GetRawButton(L310_BUTTON_B) || pController_2->GetRawButton(L310_BUTTON_B))
 
-#define CLIMBER_UP					(pController_2->GetRawButton(L310_BUTTON_BUMPER_LEFT))
-#define CLIMBER_DOWN				(pController_2->GetRawButton(L310_BUTTON_BUMPER_RIGHT))
+#define CLIMBER_UP					(pController_1->GetRawButton(L310_BUTTON_A) || pController_2->GetRawButton(L310_BUTTON_A))
+#define CLIMBER_DOWN				(pController_1->GetRawButton(L310_BUTTON_B) || pController_2->GetRawButton(L310_BUTTON_B))
 
 #define GEAR_INTAKE_HOLD			(pController_1->GetRawButton(L310_BUTTON_X) || pController_2->GetRawButton(L310_BUTTON_X))
 #define GEAR_INTAKE_RELEASE			(pController_1->GetRawButton(L310_BUTTON_Y) || pController_2->GetRawButton(L310_BUTTON_Y))
+
+#define PIXIE_LIGHT					(pController_1->GetRawButton(L310_BUTTON_START) || pController_2->GetRawButton(L310_BUTTON_START))
 
 #endif // USE_L310_FOR_CONTROLLER_1
 

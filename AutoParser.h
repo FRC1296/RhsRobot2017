@@ -8,7 +8,7 @@
 // any line in the parser file that begins with a space or a # is skipped
 
 const char sComment = '#';
-const char szDelimiters[] = " ,[]()";
+const char szDelimiters[] = " ,[]()\r\n\t";
 
 ///N - doesn't need a response; R - needs a response; _ - contained within auto thread
 typedef enum AUTO_COMMAND_TOKENS
@@ -25,6 +25,8 @@ typedef enum AUTO_COMMAND_TOKENS
 	AUTO_TOKEN_TURN,				//!<R	turn <degrees - float> (timeout)
 	AUTO_TOKEN_GEAR_RELEASE, 		//!<    opens gear handler
 	AUTO_TOKEN_GEAR_HOLD,			//!< 	closes gear handler
+	AUTO_TOKEN_CLIMBER,			    //!< 	moves climber a bit
+
 	AUTO_TOKEN_LAST
 } AUTO_COMMAND_TOKENS;
 

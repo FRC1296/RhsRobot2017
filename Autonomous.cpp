@@ -33,11 +33,10 @@ bool Autonomous::CommandResponse(const char *szQueueName) {
 	iPipeXmt = open(szQueueName, O_WRONLY);
 	wpi_assert(iPipeXmt > 0);
 
+	bReceivedCommandResponse = false;
 	Message.replyQ = AUTONOMOUS_QUEUE;
 	write(iPipeXmt, (char*) &Message, sizeof(RobotMessage));
 	close(iPipeXmt);
-
-	bReceivedCommandResponse = false;
 
 	while (!bReceivedCommandResponse)
 	{
@@ -79,6 +78,9 @@ bool Autonomous::MultiCommandResponse(vector<char*> szQueueNames, vector<Message
 	int iPipeXmt;
 	uResponseCount = 0;
 	//vector<int> iPipesXmt = new vector<int>();
+
+	bReceivedCommandResponse = false;
+
 	//send messages to each component
 	for (unsigned int i = 0; i < szQueueNames.size(); i++)
 	{
@@ -90,8 +92,6 @@ bool Autonomous::MultiCommandResponse(vector<char*> szQueueNames, vector<Message
 		write(iPipeXmt, (char*) &Message, sizeof(RobotMessage));
 		close(iPipeXmt);
 	}
-
-	bReceivedCommandResponse = false;
 
 	while (uResponseCount < szQueueNames.size())
 	{
@@ -132,11 +132,12 @@ bool Autonomous::CommandNoResponse(const char *szQueueName) {
 
 void Autonomous::Delay(float delayTime)
 {
-	//breaks the delay into little bits to prevent issues in the event of disabling
-	for (double fWait = 0.0; fWait < delayTime; fWait += 0.01)
+	double fWait;
+
+
+	for (fWait = 0.0; fWait < delayTime; fWait += 0.01)
 	{
 		// if we are paused break the delay into pieces
-
 		while (bPauseAutoMode)
 		{
 			Wait(0.02);
@@ -179,8 +180,9 @@ bool Autonomous::Move(char *pCurrLinePos) {
 	{
 		return (false);
 	}
+
 	Message.command = COMMAND_DRIVETRAIN_AUTO_MOVE;
-	Message.params.tankDrive.left = fLeft;
+	Message.params.tankDrive.left =  -fLeft;
 	Message.params.tankDrive.right = fRight;
 
 	return (CommandNoResponse(DRIVETRAIN_QUEUE));
@@ -191,6 +193,7 @@ bool Autonomous::MeasuredMove(char *pCurrLinePos) {
 	char *pToken;
 	float fDistance;
 	float fSpeed;
+	float fTime;
 
 	// parse remainder of line to get length to move
 
@@ -214,11 +217,22 @@ bool Autonomous::MeasuredMove(char *pCurrLinePos) {
 
 	fDistance = atof(pToken);
 
+	pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
+
+	if(pToken == NULL)
+	{
+		SmartDashboard::PutString("Auto Status","EARLY DEATH!");
+		return (false);
+	}
+
+	fTime = atof(pToken);
+
 	// send the message to the drive train
 
 	Message.command = COMMAND_DRIVETRAIN_AUTO_MMOVE;
 	Message.params.mmove.fSpeed = fSpeed;
 	Message.params.mmove.fDistance = fDistance;
+	Message.params.mmove.fTime = fTime;
 
 	return (CommandResponse(DRIVETRAIN_QUEUE));
 }
@@ -228,6 +242,7 @@ bool Autonomous::MeasuredMoveProximity(char *pCurrLinePos) {
 	char *pToken;
 	float fDistance;
 	float fSpeed;
+	float fTime;
 
 	// parse remainder of line to get length to move
 
@@ -251,11 +266,22 @@ bool Autonomous::MeasuredMoveProximity(char *pCurrLinePos) {
 
 	fDistance = atof(pToken);
 
+	pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
+
+	if(pToken == NULL)
+	{
+		SmartDashboard::PutString("Auto Status","EARLY DEATH!");
+		return (false);
+	}
+
+	fTime = atof(pToken);
+
 	// send the message to the drive train
 
 	Message.command = COMMAND_DRIVETRAIN_AUTO_PMOVE;
 	Message.params.pmove.fSpeed = fSpeed;
 	Message.params.pmove.fDistance = fDistance;
+	Message.params.pmove.fTime= fTime;
 
 	return (CommandResponse(DRIVETRAIN_QUEUE));
 }
@@ -299,7 +325,6 @@ bool Autonomous::Turn(char *pCurrLinePos) {
 	char *pToken;
 	float fAngle;
 	float fTimeout;
-
 	// parse remainder of line to get target angle and timeout
 	pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
 
@@ -333,7 +358,7 @@ bool Autonomous::GearRelease()
 	// move measure distance forward/backward
 
 	Message.command = COMMAND_GEARINTAKE_RELEASE;
-	CommandNoResponse(DRIVETRAIN_QUEUE);
+	CommandNoResponse(GEARINTAKE_QUEUE);
 	return (true);
 }
 
@@ -342,6 +367,14 @@ bool Autonomous::GearHold()
 	// move measure distance forward/backward
 
 	Message.command = COMMAND_GEARINTAKE_HOLD;
-	CommandNoResponse(DRIVETRAIN_QUEUE);
+	CommandNoResponse(GEARINTAKE_QUEUE);
 	return (true);
 }
+
+bool Autonomous::Climber()
+{
+	Message.command = COMMAND_AUTO_CLIMBER;
+	Message.params.climber.ClimbUp=1.0;
+	return (CommandNoResponse(CLIMBER_QUEUE));
+}
+
