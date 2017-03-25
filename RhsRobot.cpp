@@ -247,7 +247,7 @@ void RhsRobot::Run() {
 			if(!bGearButtonDown)
 			{
 				robotMessage.command = COMMAND_GEARFLOORINTAKE_PREVPOS;
-				pGearIntake->SendMessage(&robotMessage);
+				pGearFloor->SendMessage(&robotMessage);
 				bGearButtonDown = true;
 			}
 		}
@@ -256,7 +256,7 @@ void RhsRobot::Run() {
 			if(!bGearButtonDown)
 			{
 				robotMessage.command = COMMAND_GEARFLOORINTAKE_NEXTPOS;
-				pGearIntake->SendMessage(&robotMessage);
+				pGearFloor->SendMessage(&robotMessage);
 				bGearButtonDown = true;
 			}
 		}
@@ -269,19 +269,19 @@ void RhsRobot::Run() {
 		{
 			robotMessage.command = COMMAND_GEARFLOORINTAKE_PULLIN;
 			robotMessage.params.floor.fSpeed = GEAR_FLOOR_PULLIN;
-			pGearIntake->SendMessage(&robotMessage);
+			pGearFloor->SendMessage(&robotMessage);
 		}
 		else if (GEAR_FLOOR_PUSHOUT < -0.2)
 		{
 			robotMessage.command = COMMAND_GEARFLOORINTAKE_PUSHOUT;
 			robotMessage.params.floor.fSpeed = -GEAR_FLOOR_PUSHOUT;
-			pGearIntake->SendMessage(&robotMessage);
+			pGearFloor->SendMessage(&robotMessage);
 		}
 		else
 		{
 			robotMessage.command = COMMAND_GEARFLOORINTAKE_STOP;
 			robotMessage.params.floor.fSpeed = 0.0;
-			pGearIntake->SendMessage(&robotMessage);
+			pGearFloor->SendMessage(&robotMessage);
 		}
 	}
 }

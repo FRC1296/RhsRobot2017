@@ -270,8 +270,8 @@ void Drivetrain::Run() {
 			SmartDashboard::PutBoolean("Gear Pickup Sweet Spot", false);
 		}
 
-		//if(pPixiImageDetect->Get())
-		if(pPixy->GetCentroid(fCentroid))
+		if(pPixiImageDetect->Get())
+		//if(pPixy->GetCentroid(fCentroid))
 		{
 			SmartDashboard::PutBoolean("Pixi Detect", true);
 			SmartDashboard::PutNumber("Pixi Raw", fCentroid);

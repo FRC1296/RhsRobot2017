@@ -20,7 +20,7 @@ GearFloorIntake::GearFloorIntake()
 : ComponentBase(GEARFLOORINTAKE_TASKNAME, GEARFLOORINTAKE_QUEUE, GEARFLOORINTAKE_PRIORITY)
 {
 	pGearIntakeMotor = new CANTalon(CAN_FLOORINTAKEROLLER_MOTOR);
-	wpi_assert(pGearArmMotor);
+	wpi_assert(pGearIntakeMotor);
 
 	pGearIntakeMotor->ConfigNeutralMode(CANSpeedController::kNeutralMode_Brake);
 	pGearIntakeMotor->SetControlMode(CANTalon::kPercentVbus);
@@ -37,7 +37,7 @@ GearFloorIntake::GearFloorIntake()
 
 	pArmPID = new PIDController(.0010, 0.0, 0.0, pGearArmMotor, pGearArmMotor, .05);
 	wpi_assert(pArmPID);
-	fFloorPosition = pGearIntakeMotor->GetPulseWidthPosition();
+	fFloorPosition = pGearArmMotor->GetPulseWidthPosition();
 	fDrivePosition = fFloorPosition + fFromFloorToDrivePos;
 	fReleasePosition  = fFloorPosition + fFromFloorToReleasePos;
 	pArmPID->SetSetpoint(fFloorPosition);
@@ -179,6 +179,7 @@ void GearFloorIntake::Run()
 			break;
 
 	    case COMMAND_GEARFLOORINTAKE_STOP:
+	    	pGearIntakeMotor->Set(0.0);
 			break;
 
 	    case COMMAND_SYSTEM_MSGTIMEOUT:  //what should we do if we do not get a timely message?
