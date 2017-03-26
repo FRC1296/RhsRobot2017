@@ -34,6 +34,7 @@ const char *szTokens[] = {
 		"TURN",				//!<(degrees) (timeout)
 		"RGEAR",
 		"HGEAR",
+		"GEARM",
 		"CLIMBER",
 		"NOP" };
 
@@ -193,6 +194,11 @@ bool Autonomous::Evaluate(std::string rStatement) {
 	case AUTO_TOKEN_GEAR_HOLD:
 		GearHold();
 		rStatus.append("gear hold");
+  	   break;
+
+	case AUTO_TOKEN_GEAR_HANG:
+		GearHangMacro();
+		rStatus.append("gear hang macro");
   	   break;
 
 	case AUTO_TOKEN_CLIMBER:

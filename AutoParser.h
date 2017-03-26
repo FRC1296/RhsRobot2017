@@ -25,6 +25,7 @@ typedef enum AUTO_COMMAND_TOKENS
 	AUTO_TOKEN_TURN,				//!<R	turn <degrees - float> (timeout)
 	AUTO_TOKEN_GEAR_RELEASE, 		//!<    opens gear handler
 	AUTO_TOKEN_GEAR_HOLD,			//!< 	closes gear handler
+	AUTO_TOKEN_GEAR_HANG,			//!< 	gear hang macro
 	AUTO_TOKEN_CLIMBER,			    //!< 	moves climber a bit
 
 	AUTO_TOKEN_LAST

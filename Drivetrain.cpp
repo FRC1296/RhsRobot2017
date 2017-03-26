@@ -163,19 +163,37 @@ void Drivetrain::OnStateChange()
 
 void Drivetrain::Run() {
 
-	int loop_count;
 	switch(localMessage.command)
 	{
 	//Timing is set across this and gear intake side of macro
 		case COMMAND_MACRO_HANGGEAR:
 			Wait(0.200);
-			loop_count = 0;
-			while(loop_count<500)
+
+		    if(bUnderServoControl)
 			{
-				RunCheezyDrive(true, 0.0, -0.33, false);
-				loop_count+=50;
-				Wait(.05);
+				pLeftMotor->Set(0.33 * FULLSPEED_FROMTALONS);
+				pRightMotor->Set(-0.33 * FULLSPEED_FROMTALONS);
+				Wait(0.500);
+				// make darn sure it stops !
+				pLeftMotor->Set(0.0);
+				pRightMotor->Set(0.0);
+				pLeftMotor->ClearError();
+				pRightMotor->ClearError();
+				pLeftMotor->StopMotor();
+				pRightMotor->StopMotor();
 			}
+			else
+			{
+				int loop_count = 0;
+
+				while(loop_count<500)
+				{
+					RunCheezyDrive(true, 0.0, -0.33, false);
+					loop_count += 50;
+					Wait(.05);
+				}
+			}
+
 			ClearMessages();
 			break;
 

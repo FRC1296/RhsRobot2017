@@ -69,6 +69,7 @@ private:
 	bool Turn(char *);
 	bool GearRelease(void);
 	bool GearHold(void);
+	bool GearHangMacro(void);
 	bool Climber(void);
 
 	bool CommandResponse(const char *szQueueName);

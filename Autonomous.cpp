@@ -371,6 +371,17 @@ bool Autonomous::GearHold()
 	return (true);
 }
 
+bool Autonomous::GearHangMacro()
+{
+	// run the gear hangar macro, should only take 750ms or so
+
+	Message.command = COMMAND_GEARINTAKE_RELEASE;
+	CommandNoResponse(GEARFLOORINTAKE_QUEUE);
+	CommandNoResponse(DRIVETRAIN_QUEUE);
+	Wait(1.0);
+	return (true);
+}
+
 bool Autonomous::Climber()
 {
 	Message.command = COMMAND_AUTO_CLIMBER;
