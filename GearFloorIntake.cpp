@@ -109,33 +109,42 @@ void GearFloorIntake::OnStateChange()
 
 void GearFloorIntake::Run()
 {
-	float fStopMotor = pGearArmMotor->GetOutputCurrent();
-	float fPosition = pGearArmMotor->GetPulseWidthPosition();
-	float motorspeed = pGearArmMotor->GetOutputVoltage();
-	//double pval = pGearArmMotor->GetP();
+	float fStopMotor;
+	float fPosition;
+	float motorspeed;
 
-	SmartDashboard::PutNumber("Arm Current", fStopMotor);
-	SmartDashboard::PutNumber("Arm Position", fPosition/4096);
-	SmartDashboard::PutNumber("FLOOR POS", fFloorPosition);
-	SmartDashboard::PutNumber("DRIVE POS", fDrivePosition);
-	SmartDashboard::PutNumber("RELEASE POS", fReleasePosition);
-	SmartDashboard::PutNumber("Speed:", motorspeed);
-
-	// stay here if the current is exceeded
-
-	if(fStopMotor >= fMaxArmCurrent)
+	if(iLoop % 10 == 0)
 	{
-		//pGearArmMotor->SetPosition(0);
-		pGearArmMotor->Set(fPosition);
+		fStopMotor = pGearArmMotor->GetOutputCurrent();
+		fPosition = pGearArmMotor->GetPulseWidthPosition();
+		motorspeed = pGearArmMotor->GetOutputVoltage();
+		//double pval = pGearArmMotor->GetP();
+
+		SmartDashboard::PutNumber("Arm Current", fStopMotor);
+		SmartDashboard::PutNumber("Arm Position", fPosition/4096.0);
+		SmartDashboard::PutNumber("FLOOR POS", fFloorPosition);
+		SmartDashboard::PutNumber("DRIVE POS", fDrivePosition);
+		SmartDashboard::PutNumber("RELEASE POS", fReleasePosition);
+		SmartDashboard::PutNumber("Speed:", motorspeed);
+
+		// stay here if the current is exceeded
+
+		if(fStopMotor >= fMaxArmCurrent)
+		{
+			//pGearArmMotor->SetPosition(0);
+			pGearArmMotor->Set(fPosition);
+		}
+
+		if(eCurrentPosition == ARMPOS_FLOOR && pGearIntakeMotor->IsRevLimitSwitchClosed()) {
+			pGearArmMotor->Set(fDrivePosition);
+			eCurrentPosition = ARMPOS_DRIVE;
+			SmartDashboard::PutString("SETTING:", "DRIVE POS (1)");
+		}
+
+		SmartDashboard::PutBoolean("Gear?", pGearIntakeMotor->IsRevLimitSwitchClosed());
 	}
 
-	if(eCurrentPosition == ARMPOS_FLOOR && pGearIntakeMotor->IsRevLimitSwitchClosed()) {
-		pGearArmMotor->Set(fDrivePosition);
-		eCurrentPosition = ARMPOS_DRIVE;
-		SmartDashboard::PutString("SETTING:", "DRIVE POS (1)");
-	}
 
-	SmartDashboard::PutBoolean("Gear?", pGearIntakeMotor->IsRevLimitSwitchClosed());
 
 	switch(localMessage.command)			//Reads the message command
 	{

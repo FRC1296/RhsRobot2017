@@ -84,13 +84,18 @@ void Climber::OnStateChange()
 void Climber::Run()
 {
 #ifndef USING_SOFTWARE_ROBOT
-	float StopMotor = pClimberMotor1->GetOutputCurrent();
-	SmartDashboard::PutNumber("Climber1 (1)", StopMotor);
+	float StopMotor;
 
-	if(StopMotor>=40.0)
+	if(iLoop % 10 == 0)
 	{
-		pClimberMotor1->Set(0.0);
-		pClimberMotor2->Set(0.0);
+		StopMotor = pClimberMotor1->GetOutputCurrent();
+		SmartDashboard::PutNumber("Climber1 (1)", StopMotor);
+
+		if(StopMotor>=40.0)
+		{
+			pClimberMotor1->Set(0.0);
+			pClimberMotor2->Set(0.0);
+		}
 	}
 
 	else
