@@ -271,10 +271,10 @@ void RhsRobot::Run() {
 			robotMessage.params.floor.fSpeed = GEAR_FLOOR_PULLIN;
 			pGearFloor->SendMessage(&robotMessage);
 		}
-		else if (GEAR_FLOOR_PUSHOUT < -0.2)
+		else if (GEAR_FLOOR_PUSHOUT > 0.2)
 		{
 			robotMessage.command = COMMAND_GEARFLOORINTAKE_PUSHOUT;
-			robotMessage.params.floor.fSpeed = -GEAR_FLOOR_PUSHOUT;
+			robotMessage.params.floor.fSpeed = GEAR_FLOOR_PUSHOUT;
 			pGearFloor->SendMessage(&robotMessage);
 		}
 		else

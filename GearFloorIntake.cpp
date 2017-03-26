@@ -30,12 +30,14 @@ GearFloorIntake::GearFloorIntake()
 	wpi_assert(pGearArmMotor);
 	pGearArmMotor->ConfigNeutralMode(CANSpeedController::kNeutralMode_Brake);
 	pGearArmMotor->SetFeedbackDevice(CANTalon::CtreMagEncoder_Absolute);
-	pGearArmMotor->SetInverted(true);
+	pGearArmMotor->SetSensorDirection(true); // try it both ways
 	pGearArmMotor->SetIzone(fGearArmMotorIzone);
 	pGearArmMotor->SetCloseLoopRampRate(fGearArmMotorMaxRamp);
-	pGearArmMotor->SetControlMode(CANTalon::kPercentVbus);
+	//pGearArmMotor->SetControlMode(CANTalon::kPercentVbus);
+	pGearArmMotor->SetControlMode(CANTalon::kPosition);
+	pGearIntakeMotor->Enable();
 
-	pArmPID = new PIDController(.0010, 0.0, 0.0, pGearArmMotor, pGearArmMotor, .05);
+	pArmPID = new PIDController(.0010, 0.0, 0.0, pGearArmMotor, pGearArmMotor, .05);  // try lowering gain at first
 	wpi_assert(pArmPID);
 	fFloorPosition = pGearArmMotor->GetPulseWidthPosition();
 	fDrivePosition = fFloorPosition + fFromFloorToDrivePos;
