@@ -1,12 +1,14 @@
 #include "PixyCam.h"
 
 //#define PIXI_SERIAL
-#define PIXI_SPI
+//#define PIXI_SPI
 
 PixyCam::PixyCam() {
 
 	bBlockFound = false;
 	fCentroid = 0.0;
+	iCentroid1 = 0;
+	iCentroid2 = 0;
 
 	pTask = new std::thread(&PixyCam::StartTask, this, PIXI_TASKNAME, PIXI_PRIORITY);
 }
@@ -99,8 +101,8 @@ void PixyCam::Run(void)
 				 if(uPixiWord == PIXICOM_FRAMESYNCWORD)
 				 {
 					 uBlockByteCount = 0;
-					 iCentroid1 = 0;
-					 iCentroid2 = 0;
+//					 iCentroid1 = 0;
+//					 iCentroid2 = 0;
 					 ePixyComState = PIXYCOM_GETBLOCKDATA;
 				 }
 				 else if(uPixiWord == 0)

@@ -26,6 +26,8 @@ ComponentBase::ComponentBase(const char* newComponentName, const char *queueName
 	iLoop = 0;
 	iPipeRcv = -1;
 	iPipeXmt = -1;
+
+	iPipeRpt = -1;
 	pTask = NULL;
 
 	mkfifo(queueName, 0666);

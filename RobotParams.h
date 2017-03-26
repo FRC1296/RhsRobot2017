@@ -187,16 +187,21 @@ const int POV_STILL = -1;
 #define HOPPER_UP					(pController_1->GetRawButton(L310_BUTTON_A) || pController_2->GetRawButton(L310_BUTTON_A))
 #define HOPPER_DOWN					(pController_1->GetRawButton(L310_BUTTON_B) || pController_2->GetRawButton(L310_BUTTON_B))
 
-#define CLIMBER_UP					(pController_1->GetRawButton(L310_BUTTON_A) || pController_2->GetRawButton(L310_BUTTON_A))
-#define CLIMBER_DOWN				(pController_1->GetRawButton(L310_BUTTON_B) || pController_2->GetRawButton(L310_BUTTON_B))
-
+#define CLIMBER_UP					(pController_1->GetRawButton(L310_BUTTON_A) || pController_2->GetRawButton(L310_BUTTON_BUMPER_RIGHT))
+#define CLIMBER_DOWN				0//(pController_1->GetRawButton(L310_BUTTON_B) || pController_2->GetRawButton(L310_BUTTON_BUMPER_LEFT))
+/*
 #define GEAR_INTAKE_HOLD			(pController_1->GetRawButton(L310_BUTTON_X) || pController_2->GetRawButton(L310_BUTTON_X))
 #define GEAR_INTAKE_RELEASE			(pController_1->GetRawButton(L310_BUTTON_Y) || pController_2->GetRawButton(L310_BUTTON_Y))
+*/
+#define GEAR_POS_FLOOR				(pController_2->GetRawButton(L310_BUTTON_A))
+#define GEAR_POS_SCORE				(pController_2->GetRawButton(L310_BUTTON_B))
+#define GEAR_POS_ROBOT				(pController_2->GetRawButton(L310_BUTTON_Y))
 
+#define GEAR_HANG_MACRO			    (pController_2->GetRawButton(L310_BUTTON_X))
 #define GEAR_FLOOR_NEXTPOS			(pController_1->GetRawButton(L310_BUTTON_X) || pController_2->GetRawButton(L310_BUTTON_X))
 #define GEAR_FLOOR_PREVPOS			(pController_1->GetRawButton(L310_BUTTON_Y) || pController_2->GetRawButton(L310_BUTTON_Y))
-#define GEAR_FLOOR_PULLIN			(pController_1->GetRawAxis(L310_TRIGGER_LEFT) + pController_2->GetRawAxis(L310_TRIGGER_LEFT))
-#define GEAR_FLOOR_PUSHOUT			(pController_1->GetRawAxis(L310_TRIGGER_RIGHT) + pController_2->GetRawAxis(L310_TRIGGER_RIGHT))
+#define GEAR_FLOOR_PULLIN			/*(pController_1->GetRawAxis(L310_TRIGGER_RIGHT) +*/(pController_2->GetRawAxis(L310_TRIGGER_LEFT))
+#define GEAR_FLOOR_PUSHOUT			/*(pController_1->GetRawAxis(L310_TRIGGER_LEFT) +*/ (pController_2->GetRawAxis(L310_TRIGGER_RIGHT))
 
 #define PIXIE_LIGHT					(pController_1->GetRawButton(L310_BUTTON_START) || pController_2->GetRawButton(L310_BUTTON_START))
 

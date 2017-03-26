@@ -163,8 +163,22 @@ void Drivetrain::OnStateChange()
 
 void Drivetrain::Run() {
 
+	int loop_count;
 	switch(localMessage.command)
 	{
+	//Timing is set across this and gear intake side of macro
+		case COMMAND_MACRO_HANGGEAR:
+			Wait(0.200);
+			loop_count = 0;
+			while(loop_count<500)
+			{
+				RunCheezyDrive(true, 0.0, -0.33, false);
+				loop_count+=50;
+				Wait(.05);
+			}
+			ClearMessages();
+			break;
+
 		case COMMAND_DRIVETRAIN_DRIVE_TANK:  // move the robot in tank mode
 			pLeftMotor->Set(localMessage.params.tankDrive.left);
 			pRightMotor->Set(localMessage.params.tankDrive.right);
@@ -270,8 +284,8 @@ void Drivetrain::Run() {
 			SmartDashboard::PutBoolean("Gear Pickup Sweet Spot", false);
 		}
 
-		if(pPixiImageDetect->Get())
-		//if(pPixy->GetCentroid(fCentroid))
+		//if(pPixiImageDetect->Get())
+		if(pPixy->GetCentroid(fCentroid))
 		{
 			SmartDashboard::PutBoolean("Pixi Detect", true);
 			SmartDashboard::PutNumber("Pixi Raw", fCentroid);

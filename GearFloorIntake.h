@@ -46,14 +46,16 @@ public:
 private:
 	CANTalon* pGearArmMotor;
 	CANTalon* pGearIntakeMotor;
-	PIDController* pArmPID;
+	//PIDController* pArmPID;
 	float fFloorPosition;
 	float fDrivePosition;
 	float fReleasePosition;
+	bool isInit = false;
 	ArmPosition eCurrentPosition;
 
-	const float fFromFloorToDrivePos = 250.0;
-	const float fFromFloorToReleasePos = 125.0;
+	const float fFromRobotToFloorPos = 1.525;//-250.0;
+	//const float fFromFloorToDrivePos = 1.6195;//-250.0;
+	const float fFromRobotToReleasePos = .5281;//-125.0;
 	const float fMaxIntakeSpeed = 1.0;
 	const float fMaxArmCurrent = 40.0;
 
@@ -62,6 +64,8 @@ private:
 
 	void OnStateChange();
 	void Run();
+	void InitGearArm();
+
 };
 
 #endif			//GEARINTAKE_H

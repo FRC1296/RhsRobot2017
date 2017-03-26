@@ -150,6 +150,16 @@ void RhsRobot::Run() {
 		}
 	}
 
+	if(GEAR_HANG_MACRO)
+	{
+		if (pDrivetrain && pGearFloor)
+		{
+			robotMessage.command = COMMAND_MACRO_HANGGEAR;
+ 			pDrivetrain->SendMessage(&robotMessage);
+ 			pGearFloor->SendMessage(&robotMessage);
+		}
+	}
+
 	if (pDrivetrain)
 	{
 		robotMessage.command = COMMAND_DRIVETRAIN_DRIVE_CHEEZY;
@@ -217,7 +227,7 @@ void RhsRobot::Run() {
 		}
 	}
 
-	if (pGearIntake)
+	/*if (pGearIntake)
 	{
 		if (GEAR_INTAKE_HOLD)
 		{
@@ -229,61 +239,72 @@ void RhsRobot::Run() {
 		{
 			robotMessage.command = COMMAND_GEARINTAKE_RELEASE;
 			robotMessage.params.gear.GearRelease = 1.0;
-			pGearIntake->SendMessage(&robotMessage);
+			pGearIntake->SendMessage(&robotMessage);x v
 		}
 		else
 		{
 			robotMessage.command = COMMAND_GEARINTAKE_TENSION;
 			pGearIntake->SendMessage(&robotMessage);
 		}
-	}
+	}*/
 
-	if (pGearFloor)
-	{
-		// send message once per button push
+    if (pGearFloor)
+    {
+        // send message once per button push
 
-		if (GEAR_FLOOR_NEXTPOS)
-		{
-			if(!bGearButtonDown)
-			{
-				robotMessage.command = COMMAND_GEARFLOORINTAKE_PREVPOS;
-				pGearFloor->SendMessage(&robotMessage);
-				bGearButtonDown = true;
-			}
-		}
-		else if (GEAR_FLOOR_PREVPOS)
-		{
-			if(!bGearButtonDown)
-			{
-				robotMessage.command = COMMAND_GEARFLOORINTAKE_NEXTPOS;
-				pGearFloor->SendMessage(&robotMessage);
-				bGearButtonDown = true;
-			}
-		}
-		else
-		{
-			bGearButtonDown = false;
-		}
+        if (GEAR_POS_ROBOT)
+        {
+            if(!bGearButtonDown)
+            {
+               // robotMessage.command = COMMAND_GEARFLOORINTAKE_PREVPOS;
+            	robotMessage.command = COMMAND_GEARFLOORINTAKE_DRIVEPOS;
+                pGearFloor->SendMessage(&robotMessage);
+                bGearButtonDown = true;
+            }
+        }
+        else if(GEAR_POS_FLOOR)
+        {
+        	if(!bGearButtonDown)
+        	            {
+        	            	robotMessage.command = COMMAND_GEARFLOORINTAKE_INTAKEPOS;
+        	                //robotMessage.command = COMMAND_GEARFLOORINTAKE_NEXTPOS;
+        	                pGearFloor->SendMessage(&robotMessage);
+        	                bGearButtonDown = true;
+        	            }
+        }
+        else if (GEAR_POS_SCORE)
+        {
+            if(!bGearButtonDown)
+            {
+            	robotMessage.command = COMMAND_GEARFLOORINTAKE_RELEASEPOS;
+                pGearFloor->SendMessage(&robotMessage);
+                bGearButtonDown = true;
+            }
+        }
+        else
+        {
+            bGearButtonDown = false;
+        }
 
-		if (GEAR_FLOOR_PULLIN > 0.2)
-		{
-			robotMessage.command = COMMAND_GEARFLOORINTAKE_PULLIN;
-			robotMessage.params.floor.fSpeed = GEAR_FLOOR_PULLIN;
-			pGearFloor->SendMessage(&robotMessage);
-		}
-		else if (GEAR_FLOOR_PUSHOUT > 0.2)
-		{
-			robotMessage.command = COMMAND_GEARFLOORINTAKE_PUSHOUT;
-			robotMessage.params.floor.fSpeed = GEAR_FLOOR_PUSHOUT;
-			pGearFloor->SendMessage(&robotMessage);
-		}
-		else
-		{
-			robotMessage.command = COMMAND_GEARFLOORINTAKE_STOP;
-			robotMessage.params.floor.fSpeed = 0.0;
-			pGearFloor->SendMessage(&robotMessage);
-		}
-	}
+        if (GEAR_FLOOR_PULLIN > 0.2)
+        {
+            robotMessage.command = COMMAND_GEARFLOORINTAKE_PULLIN;
+            robotMessage.params.floor.fSpeed = GEAR_FLOOR_PULLIN;
+            pGearFloor->SendMessage(&robotMessage);
+        }
+        else if (GEAR_FLOOR_PUSHOUT > 0.2)
+        {
+            robotMessage.command = COMMAND_GEARFLOORINTAKE_PUSHOUT;
+            robotMessage.params.floor.fSpeed = GEAR_FLOOR_PUSHOUT;
+            pGearFloor->SendMessage(&robotMessage);
+        }
+        else
+        {
+            robotMessage.command = COMMAND_GEARFLOORINTAKE_STOP;
+            robotMessage.params.floor.fSpeed = 0.0;
+            pGearFloor->SendMessage(&robotMessage);
+        }
+    }
 }
 
 START_ROBOT_CLASS(RhsRobot)

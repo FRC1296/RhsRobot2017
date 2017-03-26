@@ -24,6 +24,9 @@ Autonomous::Autonomous()
 	bReceivedCommandResponse = false;
 	ReceivedCommand = COMMAND_UNKNOWN;
 
+	bPauseAutoMode = false;
+	bScriptLoaded = false;
+
 	pDebugTimer = new Timer();
 	pDebugTimer->Start();
 
