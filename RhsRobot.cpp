@@ -71,7 +71,7 @@ void RhsRobot::Init() {
 	pController_2 = new Joystick(1);
 	pDrivetrain = new Drivetrain();
 	pClimber = new Climber();
-	pHopper = new Hopper();
+	//pHopper = new Hopper();
 	//pGearIntake = new GearIntake();
 	pGearFloor = new GearFloorIntake();
 	pAutonomous = new Autonomous();
@@ -305,6 +305,20 @@ void RhsRobot::Run() {
             pGearFloor->SendMessage(&robotMessage);
         }
     }
+
+	if((iLoop++ % 50) == 0)
+	{
+		robotMessage.command = COMMAND_SYSTEM_CONSTANTS;
+		robotMessage.params.system.fBattery = DriverStation::GetInstance().GetBatteryVoltage();
+
+		// send system health data to interested subsystems
+
+		if(pDrivetrain)
+		{
+			pDrivetrain->SendMessage(&robotMessage);
+		}
+	}
+
 }
 
 START_ROBOT_CLASS(RhsRobot)

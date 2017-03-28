@@ -17,6 +17,38 @@
 
 #include "ADXRS453Z.h"
 
+/*
+Selected Device:0:Quad Encoder
+Pos (rot):   1.360 	Velocity (RPM):   0.00
+Pos:2786 	Velocity:0
+
+Quad Encoder (4x)
+Pos (rot):   1.360 	Velocity (RPM):   0.00
+Pos:2786 	Velocity:0
+Pins: A=1 B=1 Idx=1
+Idx rise edges:0
+
+... 8 feet later
+
+Selected Device:0:Quad Encoder
+Pos (rot):   -0.480 	Velocity (RPM):   0.00
+Pos:-986 	Velocity:0
+
+Quad Encoder (4x)
+Pos (rot):   -0.480 	Velocity (RPM):   0.00
+Pos:-986 	Velocity:0
+Pins: A=1 B=1 Idx=1
+Idx rise edges:0
+
+so ...
+
+1.36+.480  rotations = 1.84 rotations  ?
+2786 + 986 counts = 3772 = 7+ revolutions = 7.56 feet
+2 rev =
+
+
+*/
+
 // constants used to tune TALONS
 
 // measured 546 left and 534 right on the ground,
@@ -27,17 +59,17 @@ const float TALON_FTERM_L = 		1.364;	// From CTRE manual, section 12.4
 const float TALON_PTERM_L = 		(0.372);
 const float TALON_ITERM_L = 		(TALON_PTERM_L / 100.0);
 const float TALON_DTERM_L = 		(TALON_PTERM_L * 10.0);
-const float TALON_FTERM_R = 		1.364;	// From CTRE manual, section 12.4
-const float TALON_PTERM_R = 		(0.372);
-const float TALON_ITERM_R = 		(TALON_PTERM_L / 100.0);
-const float TALON_DTERM_R = 		(TALON_PTERM_L * 10.0);
+const float TALON_FTERM_R = 		(TALON_FTERM_L * 0.75);	// right side always seems stronger
+const float TALON_PTERM_R = 		(TALON_PTERM_L * 0.75);
+const float TALON_ITERM_R = 		(TALON_PTERM_R / 100.0);
+const float TALON_DTERM_R = 		(TALON_PTERM_R * 10.0);
 const float TALON_MAXRAMP =			60;		// 200ms
 const float TALON_IZONE	=			128;
 const float TALON_COUNTSPERREV =	512;	// from CTRE docs
 const float REVSPERFOOT = (3.14159 * 2.0 * 2.0 / 12.0);
-const double METERS_PER_COUNT = (REVSPERFOOT * 0.3048 / (double)TALON_COUNTSPERREV);
+const double METERS_PER_COUNT = (REVSPERFOOT / (double)TALON_COUNTSPERREV);
 
-const float fMinimumTurnSpeed = 0.25;
+const float fMinimumTurnSpeed = 0.75;
 const float fMaxUltrasonicDistance = (25.0/REVSPERFOOT*TALON_COUNTSPERREV);  //25 feet
 
 const int iIdealGearDistance = 10;    // 10" need to get this right (used for indicator on panel)

@@ -1,4 +1,4 @@
-/** \file
+ /** \file
  * Implementation of class to drive the pallet jack.
  *
  * This class is derived from the standard Component base class and includes
@@ -68,6 +68,8 @@ void Drivetrain::StartStraightDrive (float speed, float distance, float time)
 		// move to a point the requested distance away from the object
 
 		fStraightDriveDistance = pUltrasonic->GetRangeInches()/12.0 - distance;
+		printf("fStraightDriveDistance in feet %f and counts %d \n", fStraightDriveDistance,
+				(int)(fStraightDriveDistance/REVSPERFOOT*TALON_COUNTSPERREV));
 		fStraightDriveDistance = fStraightDriveDistance/REVSPERFOOT*TALON_COUNTSPERREV;
 	}
 	else
@@ -77,14 +79,14 @@ void Drivetrain::StartStraightDrive (float speed, float distance, float time)
 
 	// attempt to adjust for stop time
 
-	if(fStraightDriveDistance > 0.0)
-	{
-		fStraightDriveDistance -= (speed * TALON_COUNTSPERREV);
-	}
-	else if(fStraightDriveDistance < 0.0)
-	{
-		fStraightDriveDistance += (speed * TALON_COUNTSPERREV);
-	}
+	//if(fStraightDriveDistance > 0.0)
+	//{
+	//	fStraightDriveDistance -= (speed / FULLSPEED_FROMTALONS * 0.25);
+	//}
+	//else if(fStraightDriveDistance < 0.0)
+	//{
+	//	fStraightDriveDistance += (speed / FULLSPEED_FROMTALONS * 0.25);
+	//}
 }
 
 void Drivetrain::IterateStraightDrive(void)
@@ -107,9 +109,9 @@ void Drivetrain::IterateStraightDrive(void)
 				}
 				else
 				{
-					//printf("reached limit traveled %d , needed %d (%d) \n", pRightMotor->GetEncPosition(),
-					//		(int)(fStraightDriveDistance),
-					//		(int)(fStraightDriveDistance * (TALON_COUNTSPERREV * REVSPERFOOT)));
+					printf("reached limit traveled %d , needed %d (%d) \n", pRightMotor->GetEncPosition(),
+							(int)(fStraightDriveDistance),
+							(int)(fStraightDriveDistance * (TALON_COUNTSPERREV * REVSPERFOOT)));
 
 					break;
 				}
@@ -120,8 +122,6 @@ void Drivetrain::IterateStraightDrive(void)
 				break;
 			}
 		}
-
-		SendCommandResponse(COMMAND_AUTONOMOUS_RESPONSE_OK);
 	}
 	else
 	{
@@ -152,11 +152,11 @@ void Drivetrain::IterateStraightDrive(void)
 
 void Drivetrain::StraightDriveLoop(float speed)
 {
-	float offset;
+	float offset = 0.0;
 
 	if(bMeasuredMove)
 	{
-		offset = (pGyro->GetAngle()-fTurnAngle)/45;
+		offset = (pGyro->GetAngle()-fTurnAngle)/30.0;
 	}
 	else if(bMeasuredMoveProximity)
 	{
@@ -164,11 +164,7 @@ void Drivetrain::StraightDriveLoop(float speed)
 		{
 			// from Mittens code
 
-			offset = 1.0 - pPixiImagePosition->GetVoltage()/3.3*2.0;
-		}
-		else
-		{
-			offset = 0.0;
+			//offset = 1.0 - pPixiImagePosition->GetVoltage()/3.3*2.0;
 		}
 
 		//if(!pPixy->GetCentroid(offset))
@@ -178,11 +174,11 @@ void Drivetrain::StraightDriveLoop(float speed)
 		//            offset = (pGyro->GetAngle()-fTurnAngle)/45;
 		//        }
 
-		if(!pPixy->GetCentroid(offset))
+		if(fabs(offset) < 0.001)
 		{
 			// nothing found, just drive straight
 
-			offset = (pGyro->GetAngle()-fTurnAngle)/45;
+			offset = (pGyro->GetAngle()-fTurnAngle)/30.0;
 		}
 	}
 

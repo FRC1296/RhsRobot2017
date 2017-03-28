@@ -1,4 +1,4 @@
-/** \file
+ /** \file
  *  Defines task parameters, hardware assignments and controller button/axis assignment.
  *
  * This header contains basic parameters for the robot. All parameters must be constants with internal

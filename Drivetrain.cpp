@@ -45,11 +45,9 @@ Drivetrain::Drivetrain() :
 
 	// setup for closed loop operation with VP encoders
 	pLeftMotor->SetFeedbackDevice(CANTalon::QuadEncoder);
-	pLeftMotor->ConfigEncoderCodesPerRev(TALON_COUNTSPERREV);
 	pLeftMotor->SelectProfileSlot(0);
 	pLeftMotor->SetPID(TALON_PTERM_L, TALON_ITERM_L, TALON_DTERM_L, TALON_FTERM_L);		// PIDF
 	pLeftMotor->SetIzone(TALON_IZONE);
-	//pLeftMotor->SetCloseLoopRampRate(TALON_MAXRAMP);
 	pLeftMotor->SetInverted(true);
 	pLeftMotor->ConfigNeutralMode(CANSpeedController::kNeutralMode_Brake);
 	pLeftMotor->SetControlMode(CANTalon::kPercentVbus);
@@ -60,11 +58,9 @@ Drivetrain::Drivetrain() :
 	// setup for closed loop operation with VP encoders
 
 	pRightMotor->SetFeedbackDevice(CANTalon::QuadEncoder);
-	pRightMotor->ConfigEncoderCodesPerRev(TALON_COUNTSPERREV);
 	pRightMotor->SelectProfileSlot(0);
 	pRightMotor->SetPID(TALON_PTERM_R, TALON_ITERM_R, TALON_DTERM_R, TALON_FTERM_R);  // PIDF
 	pRightMotor->SetIzone(TALON_IZONE);
-	//pRightMotor->SetCloseLoopRampRate(TALON_MAXRAMP);
 	pRightMotor->SetInverted(true);
 	pRightMotor->ConfigNeutralMode(CANSpeedController::kNeutralMode_Brake);
 	pRightMotor->SetControlMode(CANTalon::kPercentVbus);
@@ -281,16 +277,18 @@ void Drivetrain::Run() {
 			break;
 	}
 
-	SmartDashboard::PutNumber("Battery", fBatteryVoltage);
-	SmartDashboard::PutNumber("angle", pGyro->GetAngle());
-	SmartDashboard::PutNumber("left encoder", -pLeftMotor->GetEncPosition() * METERS_PER_COUNT);
-	SmartDashboard::PutNumber("right encoder", pRightMotor->GetEncPosition() * METERS_PER_COUNT);
 
 	if(iLoop % 10 == 0)
 	{
-		float fCentroid = 1.0 - pPixiImagePosition->GetVoltage()/3.3*2.0;
+		//float fCentroid = 1.0 - pPixiImagePosition->GetVoltage()/3.3*2.0;
+		float fCentroid = pPixiImagePosition->GetVoltage();
 		int iRange = pUltrasonic->GetRangeInches();
 		SmartDashboard::PutNumber("ultrasonic", iRange);
+
+		SmartDashboard::PutNumber("Battery", fBatteryVoltage);
+		SmartDashboard::PutNumber("angle", pGyro->GetAngle());
+		SmartDashboard::PutNumber("left encoder", -pLeftMotor->GetEncPosition() * METERS_PER_COUNT);
+		SmartDashboard::PutNumber("right encoder", pRightMotor->GetEncPosition() * METERS_PER_COUNT);
 
 		if(pPixiImageDetect->Get())
 		//if(pPixy->GetCentroid(fCentroid))
@@ -301,7 +299,7 @@ void Drivetrain::Run() {
 		else
 		{
 			SmartDashboard::PutBoolean("Pixi Detect", false);
-			SmartDashboard::PutNumber("Pixi Raw", 999.9);
+			//SmartDashboard::PutNumber("Pixi Raw", 999.9);
 		}
 	}
 }

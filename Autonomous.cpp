@@ -375,7 +375,7 @@ bool Autonomous::GearHangMacro()
 {
 	// run the gear hangar macro, should only take 750ms or so
 
-	Message.command = COMMAND_GEARINTAKE_RELEASE;
+	Message.command = COMMAND_MACRO_HANGGEAR;
 	CommandNoResponse(GEARFLOORINTAKE_QUEUE);
 	CommandNoResponse(DRIVETRAIN_QUEUE);
 	Wait(1.0);
