@@ -67,6 +67,7 @@ void Drivetrain::StartStraightDrive (float speed, float distance, float time)
 
 		// move to a point the requested distance away from the object
 
+		fLastOffset = 1.0 - pPixiImagePosition->GetVoltage()/3.3*2.0;
 		fStraightDriveDistance = pUltrasonic->GetRangeInches()/12.0 - distance;
 		printf("fStraightDriveDistance in feet %f and counts %d \n", fStraightDriveDistance,
 				(int)(fStraightDriveDistance/REVSPERFOOT*TALON_COUNTSPERREV));
@@ -164,7 +165,18 @@ void Drivetrain::StraightDriveLoop(float speed)
 		{
 			// from Mittens code
 
-			//offset = 1.0 - pPixiImagePosition->GetVoltage()/3.3*2.0;
+			offset = 1.0 - pPixiImagePosition->GetVoltage()/3.3*2.0;
+
+			if(fabs(fLastOffset - offset) > 0.25)
+			{
+				// too big a jump to be believable
+
+				offset = fLastOffset;
+			}
+			else
+			{
+				fLastOffset = offset;
+			}
 		}
 
 		//if(!pPixy->GetCentroid(offset))
@@ -178,12 +190,12 @@ void Drivetrain::StraightDriveLoop(float speed)
 		{
 			// nothing found, just drive straight
 
-			offset = (pGyro->GetAngle()-fTurnAngle)/30.0;
+			offset = (pGyro->GetAngle()-fTurnAngle)/30.0 ;
 		}
 	}
 
-	pLeftMotor->Set(-(speed - offset) * FULLSPEED_FROMTALONS);
-	pRightMotor->Set((speed + offset) * FULLSPEED_FROMTALONS);
+	pLeftMotor->Set(-(speed - offset) * FULLSPEED_FROMTALONS* fBatteryVoltage / 12.0);
+	pRightMotor->Set((speed + offset) * FULLSPEED_FROMTALONS* fBatteryVoltage / 12.0);
 }
 
 
@@ -222,8 +234,8 @@ void Drivetrain::IterateTurn(void)
 
 			if(((fCurrentError >= 1.0) || (fCurrentError <= -1.0)) && (pAutoTimer->Get() < fTurnTime) && bInAuto)
 			{
-				pLeftMotor->Set(fNextMotor * FULLSPEED_FROMTALONS / 10.0);
-				pRightMotor->Set(fNextMotor * FULLSPEED_FROMTALONS / 10.0);
+				pLeftMotor->Set(fNextMotor * FULLSPEED_FROMTALONS * fBatteryVoltage / 12.0);
+				pRightMotor->Set(fNextMotor * FULLSPEED_FROMTALONS * fBatteryVoltage / 12.0);
 			}
 			else
 			{

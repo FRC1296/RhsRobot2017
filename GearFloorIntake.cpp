@@ -154,7 +154,10 @@ void GearFloorIntake::Run()
 		pGearIntakeMotor->Set(0.0);
 		pGearArmMotor->Set(fFloorPosition);
 		eCurrentPosition = ARMPOS_FLOOR;
-		Wait(0.500);
+		Wait(0.400);
+		pGearArmMotor->Set(fReleasePosition);
+		eCurrentPosition = ARMPOS_RELEASE;
+		Wait(0.100);
 		ClearMessages();
 		break;
 
