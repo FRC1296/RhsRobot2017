@@ -69,7 +69,7 @@ const float TALON_COUNTSPERREV =	512;	// from CTRE docs
 const float REVSPERFOOT = (3.14159 * 2.0 * 2.0 / 12.0);
 const double METERS_PER_COUNT = (REVSPERFOOT / (double)TALON_COUNTSPERREV);
 
-const float fMinimumTurnSpeed = 0.25;
+const float fMinimumTurnSpeed = 0.20;
 const float fMaxUltrasonicDistance = (25.0/REVSPERFOOT*TALON_COUNTSPERREV);  //25 feet
 
 const int iIdealGearDistance = 10;    // 10" need to get this right (used for indicator on panel)

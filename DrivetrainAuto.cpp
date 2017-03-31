@@ -186,12 +186,12 @@ void Drivetrain::StraightDriveLoop(float speed)
 		//            offset = (pGyro->GetAngle()-fTurnAngle)/45;
 		//        }
 
-		if(fabs(offset) < 0.001)
-		{
+		//if(fabs(offset) < 0.001)
+		//{
 			// nothing found, just drive straight
 
-			offset = (pGyro->GetAngle()-fTurnAngle)/30.0 ;
-		}
+			//offset = (pGyro->GetAngle()-fTurnAngle)/30.0 ;
+		//}
 	}
 
 	pLeftMotor->Set(-(speed - offset) * FULLSPEED_FROMTALONS* fBatteryVoltage / 12.0);
